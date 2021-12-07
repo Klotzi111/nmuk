@@ -6,7 +6,7 @@
 	"client": [
 		"ButtonWidgetAccessor",
 		"ControlsListWidgetAccessor",
-		"ControlsOptionsScreenAccessor",
+		"KeybindsScreenAccessor",
 		"EntryListWidgetAccessor",
 		"GameOptionsAccessor",
 		"KeyBindingAccessor",

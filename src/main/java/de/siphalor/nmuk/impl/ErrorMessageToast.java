@@ -37,6 +37,7 @@ public class ErrorMessageToast implements Toast {
 		return width;
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public Toast.Visibility draw(MatrixStack matrices, ToastManager manager, long startTime) {
 		if (justUpdated) {
@@ -62,12 +63,12 @@ public class ErrorMessageToast implements Toast {
 		}
 
 		if (lines == null) {
-			manager.getGame().textRenderer.draw(matrices, title, 18.0F, 12.0F, -256);
+			manager.getClient().textRenderer.draw(matrices, title, 18.0F, 12.0F, -256);
 		} else {
-			manager.getGame().textRenderer.draw(matrices, title, 18.0F, 7.0F, -256);
+			manager.getClient().textRenderer.draw(matrices, title, 18.0F, 7.0F, -256);
 
 			for (int o = 0; o < lines.size(); ++o) {
-				manager.getGame().textRenderer.draw(matrices, lines.get(o), 18.0F, 18 + o * 12, -1);
+				manager.getClient().textRenderer.draw(matrices, lines.get(o), 18.0F, 18 + o * 12, -1);
 			}
 		}
 
@@ -101,18 +102,20 @@ public class ErrorMessageToast implements Toast {
 		return type;
 	}
 
+	@SuppressWarnings("resource")
 	public static void add(ToastManager manager, ErrorMessageToast.Type type, Object... args) {
 		ErrorMessageToast toast = new ErrorMessageToast(type);
-		toast.updateContent(manager.getGame(), args);
+		toast.updateContent(manager.getClient(), args);
 		manager.add(toast);
 	}
 
+	@SuppressWarnings("resource")
 	public static void show(ToastManager manager, ErrorMessageToast.Type type, Object... args) {
 		ErrorMessageToast toast = manager.getToast(ErrorMessageToast.class, type);
 		if (toast == null) {
 			add(manager, type, args);
 		} else {
-			toast.updateContent(manager.getGame(), args);
+			toast.updateContent(manager.getClient(), args);
 		}
 	}
 

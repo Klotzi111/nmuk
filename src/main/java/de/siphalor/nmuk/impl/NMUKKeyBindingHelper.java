@@ -38,7 +38,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.client.gui.screen.option.ControlsOptionsScreen;
+import net.minecraft.client.gui.screen.option.KeybindsScreen;
 import net.minecraft.client.gui.widget.EntryListWidget.Entry;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
@@ -76,6 +76,7 @@ public class NMUKKeyBindingHelper {
 		changeKeysAll(getGameOptionsAccessor(), changeFunction);
 	}
 
+	@SuppressWarnings("resource")
 	private static GameOptionsAccessor getGameOptionsAccessor() {
 		return (GameOptionsAccessor) MinecraftClient.getInstance().options;
 	}
@@ -237,14 +238,16 @@ public class NMUKKeyBindingHelper {
 	public static final Text RESET_TOOLTIP = new TranslatableText("nmuk.options.controls.reset.tooltip");
 	public static final Text DEFAULT_KEYBINDING_ENTRY_TEXT = new LiteralText("...");
 
+	@SuppressWarnings("resource")
 	private static void saveOptions() {
 		MinecraftClient.getInstance().options.write();
 	}
 
-	public static ControlsListWidget getControlsListWidgetFromCurrentScreen(Predicate<ControlsOptionsScreen> ifFunction) {
+	@SuppressWarnings("resource")
+	public static ControlsListWidget getControlsListWidgetFromCurrentScreen(Predicate<KeybindsScreen> ifFunction) {
 		Screen screen = MinecraftClient.getInstance().currentScreen;
-		if (screen instanceof ControlsOptionsScreen && ifFunction.test((ControlsOptionsScreen) screen)) {
-			return ((ControlsOptionsScreenAccessor) screen).getKeyBindingListWidget();
+		if (screen instanceof KeybindsScreen && ifFunction.test((KeybindsScreen) screen)) {
+			return ((KeybindsScreenAccessor) screen).getControlsList();
 		}
 		return null;
 	}
@@ -264,7 +267,7 @@ public class NMUKKeyBindingHelper {
 	public static void removeAlternativeKeyBinding_OptionsScreen(KeyBinding keyBinding, ControlsListWidget listWidget, ControlsListWidget.KeyBindingEntry entry) {
 		// if this method is called outside of the gui code and search the gui
 		if (listWidget == null) {
-			listWidget = getControlsListWidgetFromCurrentScreen(controlsOptionScreen -> controlsOptionScreen.focusedBinding == keyBinding);
+			listWidget = getControlsListWidgetFromCurrentScreen(keybindsScreen -> keybindsScreen.selectedKeyBinding == keyBinding);
 			// not found
 			if (listWidget == null) {
 				return;
@@ -384,6 +387,7 @@ public class NMUKKeyBindingHelper {
 		return null;
 	}
 
+	@SuppressWarnings("resource")
 	public static void resetAlternativeKeyBindings_OptionsScreen(KeyBinding baseKeyBinding, ControlsListWidget listWidget, ControlsListWidget.KeyBindingEntry entry) {
 		List<KeyBinding> alternatives = ((IKeyBinding) baseKeyBinding).nmuk_getAlternatives();
 		// we make a copy of the defaultAlternatives here because we remove some elements for calculation
@@ -430,7 +434,6 @@ public class NMUKKeyBindingHelper {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public static List<Entry<?>> getControlsListWidgetEntries(ControlsListWidget controlsList) {
 		return ((EntryListWidgetAccessor) controlsList).getChildren();
 	}
