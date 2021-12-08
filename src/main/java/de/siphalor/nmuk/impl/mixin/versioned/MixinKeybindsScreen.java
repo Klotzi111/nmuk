@@ -20,13 +20,13 @@ public abstract class MixinKeybindsScreen implements IKeybindsScreen {
 	private ControlsListWidget controlsList;
 
 	@Override
-	public ControlsListWidget nmuk_getControlsList() {
-		return controlsList;
+	public KeyBinding nmuk_getSelectedKeyBinding() {
+		return selectedKeyBinding;
 	}
 
 	@Override
-	public KeyBinding nmuk_getSelectedKeyBinding() {
-		return selectedKeyBinding;
+	public ControlsListWidget nmuk_getControlsList() {
+		return controlsList;
 	}
 
 }
