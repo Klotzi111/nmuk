@@ -31,8 +31,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import de.siphalor.nmuk.impl.AlternativeKeyBinding;
-import de.siphalor.nmuk.impl.IKeyBinding;
 import de.siphalor.nmuk.impl.NMUKKeyBindingHelper;
+import de.siphalor.nmuk.impl.duck.IKeyBinding;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
@@ -129,7 +129,7 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 		if (parent == null) {
 			return 0;
 		}
-		return ((IKeyBinding) parent).nmuk_getAlternatives().indexOf(this);
+		return ((IKeyBinding) parent).nmuk_getAlternatives().indexOf((KeyBinding) (Object) this);
 	}
 
 	@Override

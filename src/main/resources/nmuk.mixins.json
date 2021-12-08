@@ -2,11 +2,10 @@
 	"required": true,
 	"package": "de.siphalor.nmuk.impl.mixin",
 	"compatibilityLevel": "JAVA_8",
+	"plugin": "de.siphalor.nmuk.impl.mixin.NMUKMixinConfig",
 	"mixins": [],
 	"client": [
 		"ButtonWidgetAccessor",
-		"ControlsListWidgetAccessor",
-		"KeybindsScreenAccessor",
 		"EntryListWidgetAccessor",
 		"GameOptionsAccessor",
 		"KeyBindingAccessor",

@@ -32,8 +32,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.ImmutableList;
 
-import de.siphalor.nmuk.impl.IKeyBinding;
 import de.siphalor.nmuk.impl.NMUKKeyBindingHelper;
+import de.siphalor.nmuk.impl.duck.IControlsListWidget;
+import de.siphalor.nmuk.impl.duck.IKeyBinding;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
@@ -102,7 +103,7 @@ public class MixinKeyBindingEntry {
 		if (!iKeyBinding.nmuk_isAlternative()) {
 			if (resetButton.active) {
 				((ButtonWidgetAccessor) resetButton)
-					.setTooltipSupplier((button, matrices, mouseX, mouseY) -> ((ControlsListWidgetAccessor) listWidget).getParent().renderTooltip(matrices, NMUKKeyBindingHelper.RESET_TOOLTIP, mouseX, mouseY));
+					.setTooltipSupplier((button, matrices, mouseX, mouseY) -> ((IControlsListWidget) listWidget).nmuk_getParent().renderTooltip(matrices, NMUKKeyBindingHelper.RESET_TOOLTIP, mouseX, mouseY));
 			} else {
 				((ButtonWidgetAccessor) resetButton).setTooltipSupplier(ButtonWidget.EMPTY);
 			}

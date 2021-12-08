@@ -15,7 +15,7 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.nmuk.impl;
+package de.siphalor.nmuk.impl.duck;
 
 import java.util.List;
 

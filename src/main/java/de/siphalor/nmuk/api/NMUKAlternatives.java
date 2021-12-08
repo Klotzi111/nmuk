@@ -22,8 +22,8 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import de.siphalor.nmuk.impl.AlternativeKeyBinding;
-import de.siphalor.nmuk.impl.IKeyBinding;
 import de.siphalor.nmuk.impl.NMUKKeyBindingHelper;
+import de.siphalor.nmuk.impl.duck.IKeyBinding;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 

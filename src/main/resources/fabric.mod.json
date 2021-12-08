@@ -19,7 +19,9 @@
 	"environment": "client",
 	"entrypoints": {
 		"main": [],
-		"client": [],
+		"client": [
+			"de.siphalor.nmuk.impl.NMUK"
+		],
 		"server": []
 	},
 	"mixins": [

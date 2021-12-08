@@ -15,15 +15,28 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.nmuk.impl.mixin;
+package de.siphalor.nmuk.impl;
 
-import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.client.gui.screen.option.KeybindsScreen;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-@Mixin(KeybindsScreen.class)
-public interface KeybindsScreenAccessor {
-	@Accessor
-	ControlsListWidget getControlsList();
+import net.fabricmc.api.ClientModInitializer;
+
+public class NMUK implements ClientModInitializer {
+
+	public static Logger LOGGER = LogManager.getLogger();
+
+	public static final String MOD_ID = "nmuk";
+	public static final String MOD_NAME = "No More Useless Keys";
+
+	@Override
+	public void onInitializeClient() {
+
+	}
+
+	public static void log(Level level, String message) {
+		LOGGER.log(level, "[" + MOD_NAME + "] " + message);
+	}
+
 }

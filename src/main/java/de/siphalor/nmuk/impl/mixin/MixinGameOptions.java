@@ -28,10 +28,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import de.siphalor.nmuk.NMUK;
 import de.siphalor.nmuk.impl.AlternativeKeyBinding;
-import de.siphalor.nmuk.impl.IKeyBinding;
+import de.siphalor.nmuk.impl.NMUK;
 import de.siphalor.nmuk.impl.NMUKKeyBindingHelper;
+import de.siphalor.nmuk.impl.duck.IKeyBinding;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;

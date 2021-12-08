@@ -31,14 +31,15 @@ import org.jetbrains.annotations.ApiStatus;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 
-import de.siphalor.nmuk.NMUK;
 import de.siphalor.nmuk.impl.ErrorMessageToast.Type;
+import de.siphalor.nmuk.impl.duck.IKeyBinding;
+import de.siphalor.nmuk.impl.duck.IKeybindsScreen;
 import de.siphalor.nmuk.impl.mixin.*;
+import de.siphalor.nmuk.impl.version.KeybindsScreenVersionHelper;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.client.gui.screen.option.KeybindsScreen;
 import net.minecraft.client.gui.widget.EntryListWidget.Entry;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
@@ -72,6 +73,7 @@ public class NMUKKeyBindingHelper {
 		options.setKeysAll(changeFunction.apply(options.getKeysAll()));
 	}
 
+	@SuppressWarnings("unused")
 	private static void changeKeysAll(Function<KeyBinding[], KeyBinding[]> changeFunction) {
 		changeKeysAll(getGameOptionsAccessor(), changeFunction);
 	}
@@ -244,10 +246,12 @@ public class NMUKKeyBindingHelper {
 	}
 
 	@SuppressWarnings("resource")
-	public static ControlsListWidget getControlsListWidgetFromCurrentScreen(Predicate<KeybindsScreen> ifFunction) {
-		Screen screen = MinecraftClient.getInstance().currentScreen;
-		if (screen instanceof KeybindsScreen && ifFunction.test((KeybindsScreen) screen)) {
-			return ((KeybindsScreenAccessor) screen).getControlsList();
+	public static ControlsListWidget getControlsListWidgetFromCurrentScreen(Predicate<IKeybindsScreen> ifFunction) {
+		Screen currentScreen = MinecraftClient.getInstance().currentScreen;
+		if (currentScreen != null && KeybindsScreenVersionHelper.ACTUAL_KEYBINDS_SCREEN_CLASS.isAssignableFrom(currentScreen.getClass())) {
+			if (ifFunction.test((IKeybindsScreen) currentScreen)) {
+				return ((IKeybindsScreen) currentScreen).nmuk_getControlsList();
+			}
 		}
 		return null;
 	}
@@ -267,7 +271,7 @@ public class NMUKKeyBindingHelper {
 	public static void removeAlternativeKeyBinding_OptionsScreen(KeyBinding keyBinding, ControlsListWidget listWidget, ControlsListWidget.KeyBindingEntry entry) {
 		// if this method is called outside of the gui code and search the gui
 		if (listWidget == null) {
-			listWidget = getControlsListWidgetFromCurrentScreen(keybindsScreen -> keybindsScreen.selectedKeyBinding == keyBinding);
+			listWidget = getControlsListWidgetFromCurrentScreen(keybindsScreen -> keybindsScreen.nmuk_getSelectedKeyBinding() == keyBinding);
 			// not found
 			if (listWidget == null) {
 				return;

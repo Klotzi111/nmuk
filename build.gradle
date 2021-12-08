@@ -10,7 +10,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = project.archives_base_name
-version = "${project.mod_version}+mc${project.minecraft_version}"
+version = "$mod_version+mc$minecraft_version".toString()
 group = project.maven_group
 
 sourceSets {
@@ -24,12 +24,14 @@ minecraft {
 }
 
 repositories {
+	mavenLocal()
 	maven {
 		name "Siphalor's Maven"
 		url "https://maven.siphalor.de"
 	}
-	maven { url "https://jitpack.io" }
-	mavenLocal()
+	maven {
+		url "https://jitpack.io"
+	}
 }
 
 dependencies {
@@ -38,9 +40,9 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation("de.siphalor:amecsapi-${project.minecraft_major_version}:1.3.3+") {
+	modImplementation("de.siphalor:amecsapi-${project.target_minecraft_major_version}:1.3.3+") {
 		exclude group: "net.fabricmc.fabric-api"
-		exclude module: "nmuk-${project.minecraft_major_version}"
+		exclude module: "nmuk-${project.target_minecraft_major_version}"
 	}
 
 	def fabric_deps = [
@@ -99,7 +101,7 @@ jar {
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
-			artifactId = "${project.archives_base_name}-${project.minecraft_major_version}"
+			artifactId = "${project.archives_base_name}-${project.target_minecraft_major_version}"
 
 			from components.java
 		}

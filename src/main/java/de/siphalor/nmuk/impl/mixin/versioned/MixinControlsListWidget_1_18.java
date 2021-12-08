@@ -15,16 +15,27 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.nmuk.impl.mixin;
+package de.siphalor.nmuk.impl.mixin.versioned;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.Shadow;
 
+import de.siphalor.nmuk.impl.duck.IControlsListWidget;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
+import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.screen.option.KeybindsScreen;
 
 @Mixin(ControlsListWidget.class)
-public interface ControlsListWidgetAccessor {
-	@Accessor
-	KeybindsScreen getParent();
+public abstract class MixinControlsListWidget_1_18 implements IControlsListWidget {
+
+	@Shadow
+	@Final
+	KeybindsScreen parent;
+
+	@Override
+	public GameOptionsScreen nmuk_getParent() {
+		return parent;
+	}
+
 }
