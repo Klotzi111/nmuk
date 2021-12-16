@@ -22,19 +22,20 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import de.siphalor.nmuk.impl.duck.IControlsListWidget;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
 import net.minecraft.client.gui.screen.option.ControlsOptionsScreen;
-import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 
 @Mixin(ControlsListWidget.class)
-public abstract class MixinControlsListWidget_1_17 implements IControlsListWidget {
+public abstract class MixinControlsListWidget_1_14 implements IControlsListWidget {
 
-	@Shadow
+	// its called "gui" in minecraft 1.15 and below
+	@Shadow(aliases = {"field_2735", "parent", "gui"}, remap = false)
 	@Final
-	ControlsOptionsScreen parent;
+	ControlsOptionsScreen parent; // gui
 
 	@Override
-	public GameOptionsScreen nmuk_getParent() {
+	public Screen nmuk_getParent() {
 		return parent;
 	}
 

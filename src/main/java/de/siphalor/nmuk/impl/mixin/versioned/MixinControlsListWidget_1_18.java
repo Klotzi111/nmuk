@@ -22,8 +22,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import de.siphalor.nmuk.impl.duck.IControlsListWidget;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.screen.option.KeybindsScreen;
 
 @Mixin(ControlsListWidget.class)
@@ -34,7 +34,7 @@ public abstract class MixinControlsListWidget_1_18 implements IControlsListWidge
 	KeybindsScreen parent;
 
 	@Override
-	public GameOptionsScreen nmuk_getParent() {
+	public Screen nmuk_getParent() {
 		return parent;
 	}
 

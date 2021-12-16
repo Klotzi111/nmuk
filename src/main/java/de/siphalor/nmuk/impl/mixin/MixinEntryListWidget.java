@@ -19,13 +19,23 @@ package de.siphalor.nmuk.impl.mixin;
 
 import java.util.List;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.Shadow;
 
+import de.siphalor.nmuk.impl.duck.IEntryListWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
+import net.minecraft.client.gui.widget.EntryListWidget.Entry;
 
 @Mixin(EntryListWidget.class)
-public interface EntryListWidgetAccessor {
-	@Accessor
-	List<EntryListWidget.Entry<?>> getChildren();
+public abstract class MixinEntryListWidget implements IEntryListWidget {
+
+	@Shadow(aliases = {"field_22739", "children"}, remap = false)
+	@Final
+	List<EntryListWidget.Entry<?>> children;
+
+	@Override
+	public List<Entry<?>> getChildren() {
+		return children;
+	}
 }

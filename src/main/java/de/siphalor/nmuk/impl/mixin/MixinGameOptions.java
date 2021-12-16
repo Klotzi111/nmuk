@@ -19,7 +19,10 @@ package de.siphalor.nmuk.impl.mixin;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import org.apache.logging.log4j.Level;
 import org.lwjgl.glfw.GLFW;
@@ -44,8 +47,6 @@ import net.minecraft.client.util.InputUtil;
 public class MixinGameOptions {
 	@Unique
 	private File nmukOptionsFile;
-	@Unique
-	private KeyBinding[] tempKeysAll;
 
 	@Shadow
 	protected MinecraftClient client;
@@ -54,18 +55,6 @@ public class MixinGameOptions {
 	@Shadow
 	@Final
 	public KeyBinding[] keysAll;
-
-	// Prevent nmuk keybindings from getting saved to the Vanilla options file
-	@Inject(method = "accept", at = @At(value = "FIELD", target = "Lnet/minecraft/client/option/GameOptions;keysAll:[Lnet/minecraft/client/option/KeyBinding;"))
-	public void removeNMUKBindings(CallbackInfo ci) {
-		tempKeysAll = keysAll;
-		keysAll = Arrays.stream(keysAll).filter(binding -> !((IKeyBinding) binding).nmuk_isAlternative()).toArray(KeyBinding[]::new);
-	}
-
-	@Inject(method = "accept", at = @At(value = "INVOKE", target = "Lnet/minecraft/sound/SoundCategory;values()[Lnet/minecraft/sound/SoundCategory;"))
-	public void resetAllKeys(CallbackInfo ci) {
-		keysAll = tempKeysAll;
-	}
 
 	@Inject(method = "write", at = @At("RETURN"))
 	public void save(CallbackInfo ci) {

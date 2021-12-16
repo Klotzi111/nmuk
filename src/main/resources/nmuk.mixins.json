@@ -5,12 +5,11 @@
 	"plugin": "de.siphalor.nmuk.impl.mixin.NMUKMixinConfig",
 	"mixins": [],
 	"client": [
-		"ButtonWidgetAccessor",
-		"EntryListWidgetAccessor",
 		"GameOptionsAccessor",
 		"KeyBindingAccessor",
 		"KeyBindingEntryAccessor",
 		"KeyBindingRegistryImplAccessor",
+		"MixinEntryListWidget",
 		"MixinGameOptions",
 		"MixinKeyBinding",
 		"MixinKeyBindingEntry"

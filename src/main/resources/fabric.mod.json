@@ -22,14 +22,18 @@
 		"client": [
 			"de.siphalor.nmuk.impl.NMUK"
 		],
-		"server": []
+		"server": [],
+		"ti:preMixinLoad": [
+			"de.siphalor.nmuk.impl.transform.TransformationEntryPoint"
+		]
 	},
 	"mixins": [
 		"nmuk.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.4.0",
-		"fabric-key-binding-api-v1": "*"
+		"fabric-key-binding-api-v1": "*",
+		"transformerinterceptor": ">=1"
 	},
 	"suggests": {
 		"amecs": ">=1.4.1"

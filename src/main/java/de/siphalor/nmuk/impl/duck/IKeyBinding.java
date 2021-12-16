@@ -25,6 +25,9 @@ import net.minecraft.client.option.KeyBinding;
 
 @ApiStatus.Internal
 public interface IKeyBinding {
+	// only required because mc verions 1.14 does not have this
+	void nmuk$setPressed(boolean pressed);
+
 	int nmuk_getNextChildId();
 
 	void nmuk_setNextChildId(int nextChildId);

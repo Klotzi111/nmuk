@@ -1,7 +1,7 @@
 package de.siphalor.nmuk.impl.mixin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -30,9 +30,12 @@ public class NMUKMixinConfig implements IMixinConfigPlugin {
 		return ret;
 	}
 
-	private List<String> additionalMixinClasses = null;
+	private List<String> additionalMixinClasses = new ArrayList<>();
 
-	@SuppressWarnings("deprecation")
+	private void addMixins(String... mixinNames) {
+		Collections.addAll(additionalMixinClasses, mixinNames);
+	}
+
 	@Override
 	public void onLoad(String mixinPackage) {
 		// versioned mixins
@@ -41,11 +44,30 @@ public class NMUKMixinConfig implements IMixinConfigPlugin {
 		// for now doing it in here
 
 		// the order of the if statements is important. The highest version must be checked first
-		// we need to use the deprecated compareTo method because older minecraft versions do not support the new/non deprecated way
-		if (MinecraftVersionHelper.SEMANTIC_MINECRAFT_VERSION.compareTo(MinecraftVersionHelper.V1_18) >= 0) {
-			additionalMixinClasses = Arrays.asList("MixinControlsListWidget_1_18", "MixinKeybindsScreen");
-		} else if (MinecraftVersionHelper.SEMANTIC_MINECRAFT_VERSION.compareTo(MinecraftVersionHelper.V1_17) >= 0) {
-			additionalMixinClasses = Arrays.asList("MixinControlsListWidget_1_17", "MixinControlsOptionsScreen");
+		if (MinecraftVersionHelper.IS_AT_LEAST_V1_18) {
+			addMixins("MixinControlsListWidget_1_18", "MixinKeybindsScreen");
+		} else {
+			// Minecraft 1.17 and below
+			addMixins("MixinControlsListWidget_1_14", "MixinControlsOptionsScreen");
+		}
+
+		if (MinecraftVersionHelper.IS_AT_LEAST_V1_17) {
+			addMixins("MixinGameOptions_1_17");
+		} else if (MinecraftVersionHelper.IS_AT_LEAST_V1_16) {
+			addMixins("MixinGameOptions_1_16");
+		} else {
+			addMixins("MixinGameOptions_1_14");
+		}
+
+		if (MinecraftVersionHelper.IS_AT_LEAST_V1_16) {
+			addMixins("MixinButtonWidget_1_16", "MixinKeyBindingEntry_1_16");
+		} else {
+			addMixins("MixinButtonWidget_1_14", "MixinClickableWidget_1_14", "MixinKeyBindingEntry_1_14", "MixinScreen_1_14");
+		}
+
+		if (!MinecraftVersionHelper.IS_AT_LEAST_V1_15) {
+			// only mc versions below 1.15 (aka 1.14 versions) need this
+			addMixins("MixinKeyBinding_1_14");
 		}
 
 		additionalMixinClasses = prependMixinPackages(additionalMixinClasses);

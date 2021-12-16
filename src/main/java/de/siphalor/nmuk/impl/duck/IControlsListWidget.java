@@ -1,7 +1,7 @@
 package de.siphalor.nmuk.impl.duck;
 
-import net.minecraft.client.gui.screen.option.GameOptionsScreen;
+import net.minecraft.client.gui.screen.Screen;
 
 public interface IControlsListWidget {
-	GameOptionsScreen nmuk_getParent();
+	Screen nmuk_getParent();
 }

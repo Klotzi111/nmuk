@@ -58,6 +58,13 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 	private KeyBinding parent = null;
 
 	@Override
+	public void nmuk$setPressed(boolean pressed) {
+		// intentionally call the method even though we could just set the field
+		// to be more compatible with oder mixins in that method
+		((KeyBinding) (Object) this).setPressed(pressed);
+	}
+
+	@Override
 	public int nmuk_getNextChildId() {
 		return nextChildId++;
 	}
@@ -166,7 +173,7 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 	private void resetInjection(CallbackInfo callbackInfo) {
 		if (children != null && !children.isEmpty()) {
 			for (KeyBinding child : children) {
-				child.setPressed(false);
+				((IKeyBinding) child).nmuk$setPressed(false);
 			}
 		}
 	}
