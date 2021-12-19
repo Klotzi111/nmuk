@@ -40,12 +40,18 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation("de.siphalor:amecsapi-${project.target_minecraft_major_version}:1.3.4+") {
+	modImplementation("de.siphalor:amecsapi-${project.target_minecraft_major_version}:1.3.4+mc1.18-pre1") {
 		exclude group: "net.fabricmc.fabric-api"
 		exclude module: "nmuk-${project.target_minecraft_major_version}"
 	}
 
-    include(modApi("com.github.Klotzi111:TransformerInterceptor:main-SNAPSHOT"))
+	// TransformerInterceptor
+	include(modApi("com.github.Klotzi111:TransformerInterceptor:main-SNAPSHOT"))
+	
+	// Controlling
+	modImplementation("com.blamejared.controlling:Fabric:9.0") {
+		exclude(group: "com.blamejared.controlling")
+	}
 
 	// we need those old api versions because newer versions require java 16 and that is not available on older minecraft versions
 	// these old fabric apis are required because we want to support down to minecraft 1.14

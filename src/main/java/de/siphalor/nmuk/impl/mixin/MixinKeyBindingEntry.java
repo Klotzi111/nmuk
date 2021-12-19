@@ -17,7 +17,6 @@
 
 package de.siphalor.nmuk.impl.mixin;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Final;
@@ -33,16 +32,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.ImmutableList;
 
-import de.siphalor.nmuk.impl.NMUKKeyBindingHelper;
-import de.siphalor.nmuk.impl.duck.IKeyBinding;
+import de.siphalor.nmuk.impl.duck.IControlsListWidget;
 import de.siphalor.nmuk.impl.duck.IKeyBindingEntry;
+import de.siphalor.nmuk.impl.mixinimpl.MixinKeyBindingEntryImpl;
 import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
 import net.minecraft.client.gui.screen.option.ControlsListWidget.KeyBindingEntry;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
 
 @Mixin(KeyBindingEntry.class)
 public abstract class MixinKeyBindingEntry implements IKeyBindingEntry {
@@ -67,60 +64,43 @@ public abstract class MixinKeyBindingEntry implements IKeyBindingEntry {
 	private ButtonWidget alternativesButton;
 
 	@Override
-	public void setAlternativesButton(ButtonWidget alternativesButton) {
+	public void nmuk$setAlternativesButton(ButtonWidget alternativesButton) {
 		this.alternativesButton = alternativesButton;
 	}
 
 	@Override
-	public ButtonWidget getAlternativesButton() {
+	public ButtonWidget nmuk$getAlternativesButton() {
 		return alternativesButton;
 	}
 
 	@Override
-	public ButtonWidget getResetButton() {
+	public ButtonWidget nmuk$getResetButton() {
 		return resetButton;
+	}
+
+	@Override
+	public KeyBinding nmuk$getBinding() {
+		return binding;
+	}
+
+	@Override
+	public ButtonWidget nmuk$getEditButton() {
+		return editButton;
 	}
 
 	@Inject(method = "method_19870(Lnet/minecraft/client/option/KeyBinding;Lnet/minecraft/client/gui/widget/ButtonWidget;)V", at = @At("HEAD"))
 	private void resetButtonPressed(KeyBinding keyBinding, ButtonWidget widget, CallbackInfo ci) {
-		if (((IKeyBinding) keyBinding).nmuk_getParent() == null && Screen.hasShiftDown()) {
-			NMUKKeyBindingHelper.resetAlternativeKeyBindings_OptionsScreen(keyBinding, listWidget, (KeyBindingEntry) (Object) this);
-		}
+		MixinKeyBindingEntryImpl.resetButtonPressed((IKeyBindingEntry) this, keyBinding, widget, (IControlsListWidget) listWidget);
 	}
 
 	@ModifyVariable(method = {"render", "render(IIIIIIIZF)V"}, at = @At("HEAD"), ordinal = 2, argsOnly = true)
 	private int adjustXPosition(int original) {
-		return original - 30;
+		return Math.max(original - 30, 0);
 	}
 
 	@Redirect(method = {"render", "render(IIIIIIIZF)V"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/KeyBinding;isDefault()Z"))
 	private boolean isDefaultOnRender(KeyBinding keyBinding) {
-		IKeyBinding iKeyBinding = (IKeyBinding) keyBinding;
-		if (iKeyBinding.nmuk_getParent() == null) {
-			Collection<KeyBinding> defaults = NMUKKeyBindingHelper.defaultAlternatives.get(keyBinding);
-			int childrenCount = iKeyBinding.nmuk_getAlternativesCount();
-
-			if (defaults.size() == childrenCount) {
-				List<KeyBinding> children = iKeyBinding.nmuk_getAlternatives();
-				if (childrenCount > 0) {
-					for (KeyBinding child : children) {
-						if (!defaults.contains(child)) {
-							return false;
-						}
-						if (!child.isDefault()) {
-							return false;
-						}
-					}
-				}
-			} else {
-				return false;
-			}
-		} else {
-			if (keyBinding.getDefaultKey().equals(InputUtil.UNKNOWN_KEY)) {
-				return true;
-			}
-		}
-		return keyBinding.isDefault();
+		return MixinKeyBindingEntryImpl.isDefaultOnRender((IKeyBindingEntry) this, keyBinding);
 	}
 
 	@Inject(method = {"method_25396()Ljava/util/List;", "children()Ljava/util/List;"}, remap = false, at = @At("RETURN"), cancellable = true)
@@ -138,8 +118,15 @@ public abstract class MixinKeyBindingEntry implements IKeyBindingEntry {
 
 	@Inject(method = {"method_25406(DDI)Z", "mouseReleased(DDI)Z"}, remap = false, at = @At("RETURN"), cancellable = true)
 	public void mouseReleased(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-		if (alternativesButton.mouseReleased(mouseX, mouseY, button)) {
+		// btnResetKeyBinding must be called because it is not called in the original code of controlling
+		if (resetButton.mouseReleased(mouseX, mouseY, button) || alternativesButton.mouseReleased(mouseX, mouseY, button)) {
 			cir.setReturnValue(true);
 		}
 	}
+
+	@Redirect(method = {"method_25406(DDI)Z", "mouseReleased(DDI)Z"}, remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;mouseReleased(DDI)Z", ordinal = 1))
+	public boolean redirect_mouseReleased(ButtonWidget buttonWidget, double mouseX, double mouseY, int button) {
+		return false; // is returned when handler does not return
+	}
+
 }

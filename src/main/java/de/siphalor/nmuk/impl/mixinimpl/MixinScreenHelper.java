@@ -39,7 +39,7 @@ public class MixinScreenHelper {
 			screen.renderTooltip((MatrixStack) matrices, text, x, y);
 		} else {
 			try {
-				Screen_renderTooltip.invoke(screen, text.asString(), x, y);
+				Screen_renderTooltip.invoke(screen, text.getString(), x, y);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				NMUK.log(Level.ERROR, "Failed to call method \"renderTooltip\"");
 				e.printStackTrace();

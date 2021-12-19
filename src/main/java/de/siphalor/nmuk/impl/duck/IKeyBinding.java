@@ -28,37 +28,37 @@ public interface IKeyBinding {
 	// only required because mc verions 1.14 does not have this
 	void nmuk$setPressed(boolean pressed);
 
-	int nmuk_getNextChildId();
+	int nmuk$getNextChildId();
 
-	void nmuk_setNextChildId(int nextChildId);
+	void nmuk$setNextChildId(int nextChildId);
 
-	boolean nmuk_isAlternative();
+	boolean nmuk$isAlternative();
 
-	KeyBinding nmuk_getParent();
+	KeyBinding nmuk$getParent();
 
-	void nmuk_setParent(KeyBinding binding);
+	void nmuk$setParent(KeyBinding binding);
 
-	List<KeyBinding> nmuk_getAlternatives();
+	List<KeyBinding> nmuk$getAlternatives();
 
-	int nmuk_getAlternativesCount();
+	int nmuk$getAlternativesCount();
 
 	/**
 	 *
 	 * @param binding
 	 * @return the index at which the binding was found in the parent's alternatives
 	 */
-	int nmuk_removeAlternative(KeyBinding binding);
+	int nmuk$removeAlternative(KeyBinding binding);
 
-	void nmuk_addAlternative(KeyBinding binding);
+	void nmuk$addAlternative(KeyBinding binding);
 
 	/**
 	 * This method should only be used for the controls gui to determine the entry position
 	 *
 	 * @return the index in the parent's children list
 	 */
-	int nmuk_getIndexInParent();
+	int nmuk$getIndexInParent();
 
-	int nmuk_getAlternativeId();
+	int nmuk$getAlternativeId();
 
-	void nmuk_setAlternativeId(int alternativeId);
+	void nmuk$setAlternativeId(int alternativeId);
 }

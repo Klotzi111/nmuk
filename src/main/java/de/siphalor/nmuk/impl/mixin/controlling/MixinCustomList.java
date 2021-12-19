@@ -15,20 +15,29 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.nmuk.impl.mixin;
+package de.siphalor.nmuk.impl.mixin.controlling;
+
+import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.Pseudo;
+import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.client.gui.screen.option.ControlsListWidget.KeyBindingEntry;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.option.KeyBinding;
+import com.blamejared.controlling.client.CustomList;
 
-@Mixin(KeyBindingEntry.class)
-public interface KeyBindingEntryAccessor {
-	@Accessor
-	KeyBinding getBinding();
+import de.siphalor.nmuk.impl.duck.controlling.ICustomList;
+import net.minecraft.client.gui.screen.option.ControlsListWidget.Entry;
 
-	@Accessor
-	ButtonWidget getEditButton();
+@Pseudo
+@Mixin(CustomList.class)
+public abstract class MixinCustomList implements ICustomList {
+
+	@Shadow
+	public List<Entry> allEntries;
+
+	@Override
+	public List<Entry> nmuk$getAllEntries() {
+		return allEntries;
+	}
+
 }

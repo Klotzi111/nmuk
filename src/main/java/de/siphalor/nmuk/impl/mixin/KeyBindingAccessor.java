@@ -34,6 +34,11 @@ public interface KeyBindingAccessor {
 		return null;
 	}
 
+	@Accessor("CATEGORY_ORDER_MAP")
+	static Map<String, Integer> getCategoryOrderMap() {
+		return null;
+	}
+
 	@Final
 	@Mutable
 	@Accessor

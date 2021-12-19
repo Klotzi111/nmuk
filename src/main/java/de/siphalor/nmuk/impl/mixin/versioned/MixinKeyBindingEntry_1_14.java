@@ -28,6 +28,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import de.siphalor.nmuk.impl.duck.IClickableWidget;
+import de.siphalor.nmuk.impl.duck.IControlsListWidget;
 import de.siphalor.nmuk.impl.duck.IKeyBindingEntry;
 import de.siphalor.nmuk.impl.mixinimpl.MixinKeyBindingEntryImpl;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
@@ -52,22 +53,22 @@ public abstract class MixinKeyBindingEntry_1_14 implements IKeyBindingEntry {
 	private ControlsListWidget listWidget;
 
 	@Override
-	public void setBindingName(Text bindingName) {
-		this.bindingName = bindingName.asString();
+	public void nmuk$setBindingName(Text bindingName) {
+		this.bindingName = bindingName.getString();
 	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	public void onConstruct(ControlsListWidget outer, KeyBinding binding, CallbackInfo ci) {
-		MixinKeyBindingEntryImpl.init((ControlsListWidget.KeyBindingEntry) (Object) this, outer, binding);
+		MixinKeyBindingEntryImpl.init((IKeyBindingEntry) this, (IControlsListWidget) outer, binding);
 	}
 
 	@Inject(method = "render(IIIIIIIZF)V", at = @At("RETURN"))
 	public void render(int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo callbackInfo) {
-		MixinKeyBindingEntryImpl.render((KeyBindingEntry) (Object) this, null, index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
+		MixinKeyBindingEntryImpl.render((IKeyBindingEntry) this, null, index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
 
 		// render tooltips
 		// TODO: in Minecraft version 1.14: When the tooltip is rendered the rest of the gui has a dark shade
-		ButtonWidget resetButton = ((IKeyBindingEntry) this).getResetButton();
+		ButtonWidget resetButton = ((IKeyBindingEntry) this).nmuk$getResetButton();
 		((IClickableWidget) resetButton).nmuk$renderToolTipIfHovered(mouseX, mouseY);
 
 		// TODO
@@ -81,7 +82,7 @@ public abstract class MixinKeyBindingEntry_1_14 implements IKeyBindingEntry {
 		method = "render(IIIIIIIZF)V",
 		at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/class_4185;active:Z", shift = Shift.AFTER, remap = false))
 	private void setResetButtonActive(CallbackInfo callbackInfo) {
-		MixinKeyBindingEntryImpl.setResetButtonActive((KeyBindingEntry) (Object) this, listWidget, binding);
+		MixinKeyBindingEntryImpl.setResetButtonActive((IKeyBindingEntry) this, (IControlsListWidget) listWidget, binding);
 	}
 
 }

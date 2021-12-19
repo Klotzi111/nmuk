@@ -20,7 +20,7 @@ public abstract class MixinButtonWidget_1_14 implements IButtonWidget {
 	}
 
 	@Override
-	public TooltipSupplier getTooltipSupplier() {
+	public TooltipSupplier nmuk$getTooltipSupplier() {
 		return tooltipSupplier;
 	}
 

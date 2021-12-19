@@ -15,28 +15,30 @@
  * permissions and limitations under the License.
  */
 
-package de.siphalor.nmuk.impl.mixin.versioned;
+package de.siphalor.nmuk.impl.mixin.controlling;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
+
+import com.blamejared.controlling.client.NewKeyBindsList;
 
 import de.siphalor.nmuk.impl.duck.IControlsListWidget;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.client.gui.screen.option.ControlsOptionsScreen;
+import net.minecraft.client.gui.screen.option.KeybindsScreen;
 
-@Mixin(ControlsListWidget.class)
-public abstract class MixinControlsListWidget_1_14 implements IControlsListWidget {
+@Pseudo
+@Mixin(NewKeyBindsList.class)
+public abstract class MixinNewKeyBindsList implements IControlsListWidget {
 
-	// its called "gui" in minecraft 1.15 and below
-	@Shadow(aliases = {"field_2735", "parent", "gui"}, remap = false)
+	@Shadow
 	@Final
-	ControlsOptionsScreen parent; // gui
+	KeybindsScreen controlsScreen;
 
 	@Override
 	public Screen nmuk$getParent() {
-		return parent;
+		return controlsScreen;
 	}
 
 }

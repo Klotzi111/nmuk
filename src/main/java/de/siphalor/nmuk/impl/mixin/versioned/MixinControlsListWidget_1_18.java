@@ -34,7 +34,7 @@ public abstract class MixinControlsListWidget_1_18 implements IControlsListWidge
 	KeybindsScreen parent;
 
 	@Override
-	public Screen nmuk_getParent() {
+	public Screen nmuk$getParent() {
 		return parent;
 	}
 

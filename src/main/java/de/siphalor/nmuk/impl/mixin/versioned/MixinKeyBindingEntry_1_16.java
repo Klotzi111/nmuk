@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import de.siphalor.nmuk.impl.duck.IControlsListWidget;
 import de.siphalor.nmuk.impl.duck.IKeyBindingEntry;
 import de.siphalor.nmuk.impl.mixinimpl.MixinKeyBindingEntryImpl;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
@@ -51,25 +52,30 @@ public abstract class MixinKeyBindingEntry_1_16 implements IKeyBindingEntry {
 	private ControlsListWidget listWidget;
 
 	@Override
-	public void setBindingName(Text bindingName) {
+	public void nmuk$setBindingName(Text bindingName) {
 		this.bindingName = bindingName;
+	}
+
+	@Override
+	public Text nmuk$getBindingName() {
+		return bindingName;
 	}
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	public void onConstruct(ControlsListWidget outer, KeyBinding binding, Text text, CallbackInfo ci) {
-		MixinKeyBindingEntryImpl.init((ControlsListWidget.KeyBindingEntry) (Object) this, outer, binding);
+		MixinKeyBindingEntryImpl.init((IKeyBindingEntry) this, (IControlsListWidget) outer, binding);
 	}
 
 	@Inject(method = "render", at = @At("RETURN"))
 	public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo callbackInfo) {
-		MixinKeyBindingEntryImpl.render((KeyBindingEntry) (Object) this, matrices, index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
+		MixinKeyBindingEntryImpl.render((IKeyBindingEntry) this, matrices, index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
 	}
 
 	@Inject(
 		method = "render",
 		at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/client/gui/widget/ButtonWidget;active:Z", shift = Shift.AFTER))
 	private void setResetButtonActive(CallbackInfo callbackInfo) {
-		MixinKeyBindingEntryImpl.setResetButtonActive((KeyBindingEntry) (Object) this, listWidget, binding);
+		MixinKeyBindingEntryImpl.setResetButtonActive((IKeyBindingEntry) this, (IControlsListWidget) listWidget, binding);
 	}
 
 }

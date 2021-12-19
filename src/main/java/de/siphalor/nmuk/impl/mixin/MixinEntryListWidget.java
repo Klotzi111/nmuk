@@ -35,7 +35,7 @@ public abstract class MixinEntryListWidget implements IEntryListWidget {
 	List<EntryListWidget.Entry<?>> children;
 
 	@Override
-	public List<Entry<?>> getChildren() {
+	public List<Entry<?>> nmuk$getChildren() {
 		return children;
 	}
 }

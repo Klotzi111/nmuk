@@ -2,5 +2,6 @@
 	"nmuk.options.controls.reset.tooltip": "Hold Shift to reset all alternatives as well",
 	"nmuk.options.controls.bind_existing_keys_first": "Bind existing keys first!",
 	"nmuk.options.controls.main_key_unbound": "Main key is unbound",
-	"nmuk.options.controls.children_key_unbound": "Alternative key #%d is unbound"
+	"nmuk.options.controls.children_key_unbound": "Alternative key #%d is unbound",
+	"nmuk.options.controls.compat.controlling.alternatives_only": "Alts only"
 }

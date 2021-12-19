@@ -43,7 +43,7 @@ public class MixinGameOptions_1_16 {
 	@Inject(method = "write", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/client/option/GameOptions;keysAll:[Lnet/minecraft/client/option/KeyBinding;"))
 	public void removeNMUKBindings(CallbackInfo ci) {
 		tempKeysAll = keysAll;
-		keysAll = Arrays.stream(keysAll).filter(binding -> !((IKeyBinding) binding).nmuk_isAlternative()).toArray(KeyBinding[]::new);
+		keysAll = Arrays.stream(keysAll).filter(binding -> !((IKeyBinding) binding).nmuk$isAlternative()).toArray(KeyBinding[]::new);
 	}
 
 	@Inject(method = "write", at = @At(value = "INVOKE", target = "Lnet/minecraft/sound/SoundCategory;values()[Lnet/minecraft/sound/SoundCategory;"))

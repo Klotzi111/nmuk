@@ -31,10 +31,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import de.siphalor.nmuk.impl.AlternativeKeyBinding;
+import de.siphalor.nmuk.impl.KeyBindingCompareHelper;
 import de.siphalor.nmuk.impl.NMUKKeyBindingHelper;
 import de.siphalor.nmuk.impl.duck.IKeyBinding;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
 
 @Mixin(value = KeyBinding.class, priority = 800)
@@ -65,37 +65,37 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 	}
 
 	@Override
-	public int nmuk_getNextChildId() {
+	public int nmuk$getNextChildId() {
 		return nextChildId++;
 	}
 
 	@Override
-	public void nmuk_setNextChildId(int nextChildId) {
+	public void nmuk$setNextChildId(int nextChildId) {
 		this.nextChildId = nextChildId;
 	}
 
 	@Override
-	public boolean nmuk_isAlternative() {
-		return parent != null; // at this point following should be the excat same: alternativeId != AlternativeKeyBinding.NO_ALTERNATIVE_ID
+	public boolean nmuk$isAlternative() {
+		return parent != null; // at this point following should be the exact same: alternativeId != AlternativeKeyBinding.NO_ALTERNATIVE_ID
 	}
 
 	@Override
-	public KeyBinding nmuk_getParent() {
+	public KeyBinding nmuk$getParent() {
 		return parent;
 	}
 
 	@Override
-	public void nmuk_setParent(KeyBinding binding) {
+	public void nmuk$setParent(KeyBinding binding) {
 		parent = binding;
 	}
 
 	@Override
-	public List<KeyBinding> nmuk_getAlternatives() {
+	public List<KeyBinding> nmuk$getAlternatives() {
 		return children;
 	}
 
 	@Override
-	public int nmuk_getAlternativesCount() {
+	public int nmuk$getAlternativesCount() {
 		if (children == null) {
 			return 0;
 		} else {
@@ -104,7 +104,7 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 	}
 
 	@Override
-	public int nmuk_removeAlternative(KeyBinding binding) {
+	public int nmuk$removeAlternative(KeyBinding binding) {
 		if (children != null) {
 			int index = children.indexOf(binding);
 			if (index == -1) {
@@ -112,7 +112,7 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 			}
 			children.remove(index);
 
-			int bindingAltId = ((IKeyBinding) binding).nmuk_getAlternativeId();
+			int bindingAltId = ((IKeyBinding) binding).nmuk$getAlternativeId();
 			if (bindingAltId != AlternativeKeyBinding.NO_ALTERNATIVE_ID) {
 				if ((nextChildId - 1) == bindingAltId) {
 					nextChildId--;
@@ -124,7 +124,7 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 	}
 
 	@Override
-	public void nmuk_addAlternative(KeyBinding binding) {
+	public void nmuk$addAlternative(KeyBinding binding) {
 		if (children == null) {
 			children = new LinkedList<>();
 		}
@@ -132,26 +132,26 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 	}
 
 	@Override
-	public int nmuk_getIndexInParent() {
+	public int nmuk$getIndexInParent() {
 		if (parent == null) {
 			return 0;
 		}
-		return ((IKeyBinding) parent).nmuk_getAlternatives().indexOf((KeyBinding) (Object) this);
+		return ((IKeyBinding) parent).nmuk$getAlternatives().indexOf((KeyBinding) (Object) this);
 	}
 
 	@Override
-	public int nmuk_getAlternativeId() {
+	public int nmuk$getAlternativeId() {
 		return alternativeId;
 	}
 
 	@Override
-	public void nmuk_setAlternativeId(int alternativeId) {
+	public void nmuk$setAlternativeId(int alternativeId) {
 		this.alternativeId = alternativeId;
 	}
 
 	@Inject(method = "onKeyPressed", at = @At(value = "FIELD", target = "Lnet/minecraft/client/option/KeyBinding;timesPressed:I"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
 	private static void onKeyPressed(InputUtil.Key key, CallbackInfo callbackInfo, KeyBinding binding) {
-		KeyBinding parent = ((IKeyBinding) binding).nmuk_getParent();
+		KeyBinding parent = ((IKeyBinding) binding).nmuk$getParent();
 		if (parent != null) {
 			((KeyBindingAccessor) parent).setTimesPressed(((KeyBindingAccessor) parent).getTimesPressed() + 1);
 			callbackInfo.cancel();
@@ -180,20 +180,7 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 
 	@Inject(method = "compareTo", at = @At("HEAD"), cancellable = true)
 	public void compareToInjection(KeyBinding other, CallbackInfoReturnable<Integer> cir) {
-		if (parent != null) {
-			if (other == parent) {
-				cir.setReturnValue(1);
-			} else if (category.equals(other.getCategory())) {
-				KeyBinding otherParent = ((IKeyBinding) other).nmuk_getParent();
-				if (otherParent == parent) {
-					cir.setReturnValue(Integer.compare(nmuk_getAlternativeId(), ((IKeyBinding) other).nmuk_getAlternativeId()));
-				} else {
-					cir.setReturnValue(
-						I18n.translate(AlternativeKeyBinding.getBaseTranslationKey(translationKey))
-							.compareTo(I18n.translate(AlternativeKeyBinding.getBaseTranslationKey(other.getTranslationKey()))));
-				}
-			}
-		}
+		cir.setReturnValue(KeyBindingCompareHelper.compareKeyBindings((KeyBinding) (Object) this, other, false, false));
 	}
 
 	@Inject(method = "matchesKey", at = @At("HEAD"), cancellable = true)
@@ -222,8 +209,8 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 
 	@Inject(method = "setBoundKey", at = @At("RETURN"))
 	public void setBoundKeyInjection(InputUtil.Key boundKey, CallbackInfo callbackInfo) {
-		if (nmuk_isAlternative() && boundKey.equals(InputUtil.UNKNOWN_KEY)) {
-			NMUKKeyBindingHelper.removeAlternativeKeyBinding_OptionsScreen((KeyBinding) (Object) this, null, null);
+		if (nmuk$isAlternative() && boundKey.equals(InputUtil.UNKNOWN_KEY)) {
+			NMUKKeyBindingHelper.removeAlternativeKeyBinding_OptionsScreen((KeyBinding) (Object) this, null);
 		}
 	}
 }

@@ -36,6 +36,7 @@
 		"transformerinterceptor": ">=1"
 	},
 	"suggests": {
-		"amecs": ">=1.4.1"
+		"amecs": ">=1.4.1",
+		"controlling": ">=9.0"
 	}
 }

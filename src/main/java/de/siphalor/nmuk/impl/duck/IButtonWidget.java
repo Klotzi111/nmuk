@@ -30,6 +30,6 @@ public interface IButtonWidget {
 	 *
 	 * @return tooltipSupplier
 	 */
-	TooltipSupplier getTooltipSupplier();
+	TooltipSupplier nmuk$getTooltipSupplier();
 
 }

@@ -230,9 +230,9 @@ public class ReplaceNewerVersionAccessNamesClassTransformer implements ClassTran
 				changesMade = true;
 
 				// // debug
-				// MemberInfo methodInsnInfo = new MemberInfo(insn);
-				// MemberInfo newMethodInsnInfo = new MemberInfo(newInsn);
-				// System.out.println("Replaced: \"" + methodInsnInfo + "\" with \"" + newMethodInsnInfo + "\"");
+				// MemberInfo insnInfo = new MemberInfo(insn);
+				// MemberInfo newInsnInfo = new MemberInfo(newInsn);
+				// System.out.println("Replaced: \"" + insnInfo + "\" with \"" + newInsnInfo + "\"");
 				//
 				// int lineNumber = ByteCodeHelper.getNextLineNumberToInsn(insns, newInsn, ByteCodeHelper.SearchDirection.UP_THEN_DOWN, ByteCodeHelper.DEFAULT_LINENUMBER_SEARCH_RANGE);
 				// System.out.println(" -> at: " + className + ":" + lineNumber + "@" + methodNode.name);

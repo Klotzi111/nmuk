@@ -60,12 +60,12 @@ public class MixinGameOptions {
 	public void save(CallbackInfo ci) {
 		try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(nmukOptionsFile), StandardCharsets.UTF_8))) {
 			for (KeyBinding binding : keysAll) {
-				if (((IKeyBinding) binding).nmuk_isAlternative() && !binding.isUnbound()) {
+				if (((IKeyBinding) binding).nmuk$isAlternative() && !binding.isUnbound()) {
 					printWriter.println("key_" + binding.getTranslationKey() + ":" + binding.getBoundKeyTranslationKey());
 				}
 			}
 		} catch (FileNotFoundException e) {
-			NMUK.log(Level.ERROR, "Encountered an issue whilst writing nmuk options file!");
+			NMUK.log(Level.ERROR, "Encountered an issue whilst writing nmuk options file");
 			e.printStackTrace();
 		}
 	}
@@ -113,25 +113,25 @@ public class MixinGameOptions {
 
 						KeyBinding alternative = NMUKKeyBindingHelper.findMatchingAlternativeInBase(base, altId);
 						if (alternative == null) {
-							((IKeyBinding) base).nmuk_setNextChildId(altId);
+							((IKeyBinding) base).nmuk$setNextChildId(altId);
 							alternative = NMUKKeyBindingHelper.createAndAddAlternativeKeyBinding(base, InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN);
 							newAlternatives.add(alternative);
 						}
 						alternative.setBoundKey(boundKey);
 
 						int newHighestAltId = Math.max(altId, highestAlternativeIdMap.getOrDefault(base, 0));
-						((IKeyBinding) base).nmuk_setNextChildId(newHighestAltId + 1);
+						((IKeyBinding) base).nmuk$setNextChildId(newHighestAltId + 1);
 						highestAlternativeIdMap.put(base, newHighestAltId);
 					} else {
 						NMUK.log(Level.WARN, "Nmuk options entry has a base key which is not registered: " + id);
 					}
 				} catch (Throwable e) {
-					NMUK.log(Level.ERROR, "Encountered an issue whilst reading a line from nmuk options file!");
+					NMUK.log(Level.ERROR, "Encountered an issue whilst reading a line from nmuk options file");
 					e.printStackTrace();
 				}
 			}
 		} catch (IOException e) {
-			NMUK.log(Level.ERROR, "Encountered an issue whilst loading nmuk options file!");
+			NMUK.log(Level.ERROR, "Encountered an issue whilst loading nmuk options file");
 			e.printStackTrace();
 		}
 
@@ -139,9 +139,9 @@ public class MixinGameOptions {
 		for (Entry<KeyBinding> binding : highestAlternativeIdMap.object2IntEntrySet()) {
 			int addedAlts = binding.getIntValue() + 1;
 			// defaultCount at this point should be the current highestAltId + 1
-			int defaultCount = ((IKeyBinding) binding.getKey()).nmuk_getAlternativesCount();
+			int defaultCount = ((IKeyBinding) binding.getKey()).nmuk$getAlternativesCount();
 			if (defaultCount > addedAlts) {
-				List<KeyBinding> alternatives = ((IKeyBinding) binding.getKey()).nmuk_getAlternatives();
+				List<KeyBinding> alternatives = ((IKeyBinding) binding.getKey()).nmuk$getAlternatives();
 				ListIterator<KeyBinding> iterator = alternatives.subList(addedAlts, defaultCount).listIterator();
 				while (iterator.hasNext()) {
 					KeyBinding defKB = iterator.next();

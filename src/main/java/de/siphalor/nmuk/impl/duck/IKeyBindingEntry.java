@@ -1,14 +1,21 @@
 package de.siphalor.nmuk.impl.duck;
 
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.Text;
 
 public interface IKeyBindingEntry {
-	void setBindingName(Text bindingName);
+	void nmuk$setBindingName(Text bindingName);
 
-	void setAlternativesButton(ButtonWidget alternativesButton);
+	Text nmuk$getBindingName();
 
-	ButtonWidget getAlternativesButton();
+	void nmuk$setAlternativesButton(ButtonWidget alternativesButton);
 
-	ButtonWidget getResetButton();
+	ButtonWidget nmuk$getAlternativesButton();
+
+	ButtonWidget nmuk$getResetButton();
+
+	KeyBinding nmuk$getBinding();
+
+	ButtonWidget nmuk$getEditButton();
 }

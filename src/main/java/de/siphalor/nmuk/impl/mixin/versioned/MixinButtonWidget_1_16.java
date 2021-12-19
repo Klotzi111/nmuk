@@ -23,7 +23,7 @@ public abstract class MixinButtonWidget_1_16 implements IButtonWidget {
 	}
 
 	@Override
-	public TooltipSupplier getTooltipSupplier() {
+	public TooltipSupplier nmuk$getTooltipSupplier() {
 		return (button, matrices, mouseX, mouseY) -> tooltipSupplier.onTooltip(button, (MatrixStack) matrices, mouseX, mouseY);
 	}
 

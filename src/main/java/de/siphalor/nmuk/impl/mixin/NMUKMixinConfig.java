@@ -9,6 +9,7 @@ import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
+import de.siphalor.nmuk.impl.compat.controlling.CompatibilityControlling;
 import de.siphalor.nmuk.impl.version.MinecraftVersionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -71,6 +72,12 @@ public class NMUKMixinConfig implements IMixinConfigPlugin {
 		}
 
 		additionalMixinClasses = prependMixinPackages(additionalMixinClasses);
+
+		if (CompatibilityControlling.MOD_PRESENT_CONTROLLING) {
+			String prefix = CompatibilityControlling.MOD_NAME_CONTROLLING;
+			addMixins(prefix + ".MixinSortOrder", prefix + ".MixinCustomList", prefix + ".MixinKeyEntry", prefix + ".MixinNewKeyBindsList", prefix + ".MixinNewKeyBindsScreen");
+		}
+
 	}
 
 	@Override

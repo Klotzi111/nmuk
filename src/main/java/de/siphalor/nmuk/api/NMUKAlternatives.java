@@ -142,7 +142,7 @@ public class NMUKAlternatives {
 	 * @return whether the given keybinding is an alternative
 	 */
 	public static boolean isAlternative(KeyBinding binding) {
-		return ((IKeyBinding) binding).nmuk_isAlternative();
+		return ((IKeyBinding) binding).nmuk$isAlternative();
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class NMUKAlternatives {
 	 */
 	@Nullable
 	public static List<KeyBinding> getAlternatives(KeyBinding binding) {
-		return ((IKeyBinding) binding).nmuk_getAlternatives();
+		return ((IKeyBinding) binding).nmuk$getAlternatives();
 	}
 
 	/**
@@ -163,6 +163,6 @@ public class NMUKAlternatives {
 	 * @return The base keyinding or <code>null</code> if the given keybinding is no alternative
 	 */
 	public static KeyBinding getBase(KeyBinding binding) {
-		return ((IKeyBinding) binding).nmuk_getParent();
+		return ((IKeyBinding) binding).nmuk$getParent();
 	}
 }

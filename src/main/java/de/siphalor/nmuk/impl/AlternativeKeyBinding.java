@@ -57,7 +57,7 @@ public class AlternativeKeyBinding extends KeyBinding {
 
 	public AlternativeKeyBinding(KeyBinding parent, String translationKey, int alternativeId, InputUtil.Type type, int code, String category) {
 		super(makeAlternativeKeyTranslationKey(translationKey, alternativeId), type, code, category);
-		((IKeyBinding) this).nmuk_setAlternativeId(alternativeId);
-		((IKeyBinding) this).nmuk_setParent(parent);
+		((IKeyBinding) this).nmuk$setAlternativeId(alternativeId);
+		((IKeyBinding) this).nmuk$setParent(parent);
 	}
 }

@@ -31,13 +31,13 @@ import org.jetbrains.annotations.ApiStatus;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 
-import de.siphalor.nmuk.impl.duck.IEntryListWidget;
-import de.siphalor.nmuk.impl.duck.IKeyBinding;
-import de.siphalor.nmuk.impl.duck.IKeybindsScreen;
+import de.siphalor.nmuk.impl.compat.controlling.CompatibilityControlling;
+import de.siphalor.nmuk.impl.compat.controlling.KeyBindingEntryVersionHelper;
+import de.siphalor.nmuk.impl.duck.*;
+import de.siphalor.nmuk.impl.duck.controlling.ICustomList;
 import de.siphalor.nmuk.impl.mapping.MappingHelper;
 import de.siphalor.nmuk.impl.mixin.GameOptionsAccessor;
 import de.siphalor.nmuk.impl.mixin.KeyBindingAccessor;
-import de.siphalor.nmuk.impl.mixin.KeyBindingEntryAccessor;
 import de.siphalor.nmuk.impl.mixin.KeyBindingRegistryImplAccessor;
 import de.siphalor.nmuk.impl.version.KeybindsScreenVersionHelper;
 import de.siphalor.nmuk.impl.version.MinecraftVersionHelper;
@@ -64,12 +64,27 @@ public class NMUKKeyBindingHelper {
 	private static final String SIGNATURE_KeyBindingEntry_contructor_1_14 = MappingHelper.createSignature("(%s%s)V", ControlsListWidget.class, KeyBinding.class);
 	private static final String SIGNATURE_KeyBindingEntry_contructor_1_16 = MappingHelper.createSignature("(%s%s%s)V", ControlsListWidget.class, KeyBinding.class, Text.class);
 
+	// from controlling
+	private static final Constructor<?> KeyEntry_contructor;
+
+	private static final String SIGNATURE_KeyEntry_contructor;
+
 	static {
-		String signature = SIGNATURE_KeyBindingEntry_contructor_1_14;
-		if (MinecraftVersionHelper.IS_AT_LEAST_V1_16) {
-			signature = SIGNATURE_KeyBindingEntry_contructor_1_16;
+		if (CompatibilityControlling.MOD_PRESENT_CONTROLLING) {
+			SIGNATURE_KeyEntry_contructor = MappingHelper.createSignature("(%s%s)V", KeyBindingEntryVersionHelper.NewKeyBindsList_class, KeyBinding.class);
+			KeyEntry_contructor = MappingHelper.getConstructor(KeyBindingEntryVersionHelper.KeyEntry_class, SIGNATURE_KeyEntry_contructor);
+
+			KeyBindingEntry_contructor = null;
+		} else {
+			String signature = SIGNATURE_KeyBindingEntry_contructor_1_14;
+			if (MinecraftVersionHelper.IS_AT_LEAST_V1_16) {
+				signature = SIGNATURE_KeyBindingEntry_contructor_1_16;
+			}
+			KeyBindingEntry_contructor = (Constructor<KeyBindingEntry>) MappingHelper.getConstructor(KeyBindingEntry.class, signature);
+
+			SIGNATURE_KeyEntry_contructor = null;
+			KeyEntry_contructor = null;
 		}
-		KeyBindingEntry_contructor = (Constructor<KeyBindingEntry>) MappingHelper.getConstructor(KeyBindingEntry.class, signature);
 	}
 
 	private static void changeKeysAll(GameOptionsAccessor options, Function<KeyBinding[], KeyBinding[]> changeFunction) {
@@ -151,7 +166,7 @@ public class NMUKKeyBindingHelper {
 	// used in GameOptions.load
 	public static KeyBinding findMatchingAlternativeInBase(KeyBinding base, int alternativeId) {
 		IKeyBinding parent = (IKeyBinding) base;
-		List<KeyBinding> alternatives = parent.nmuk_getAlternatives();
+		List<KeyBinding> alternatives = parent.nmuk$getAlternatives();
 		return findMatchingAlternative(alternatives, base.getTranslationKey(), alternativeId);
 	}
 
@@ -179,18 +194,18 @@ public class NMUKKeyBindingHelper {
 
 		// get the next default alternative if available
 		List<KeyBinding> defaultAlternatives = NMUKKeyBindingHelper.defaultAlternatives.get(base);
-		if (defaultAlternatives.size() > parent.nmuk_getAlternativesCount()) {
-			KeyBinding defaultAlternative = defaultAlternatives.get(parent.nmuk_getAlternativesCount());
+		if (defaultAlternatives.size() > parent.nmuk$getAlternativesCount()) {
+			KeyBinding defaultAlternative = defaultAlternatives.get(parent.nmuk$getAlternativesCount());
 			makeKeyBindingAlternativeOf(base, defaultAlternative, AlternativeKeyBinding.NO_ALTERNATIVE_ID, false);
 			registerKeyBindingQuerying(defaultAlternative);
 
-			parent.nmuk_addAlternative(defaultAlternative);
+			parent.nmuk$addAlternative(defaultAlternative);
 			return defaultAlternative;
 		}
 
 		// if not we create a new alternative keybinding
-		KeyBinding alternative = new AlternativeKeyBinding(base, base.getTranslationKey(), parent.nmuk_getNextChildId(), base.getCategory());
-		parent.nmuk_addAlternative(alternative);
+		KeyBinding alternative = new AlternativeKeyBinding(base, base.getTranslationKey(), parent.nmuk$getNextChildId(), base.getCategory());
+		parent.nmuk$addAlternative(alternative);
 		return alternative;
 	}
 
@@ -203,8 +218,8 @@ public class NMUKKeyBindingHelper {
 	 */
 	public static KeyBinding createAndAddAlternativeKeyBinding(KeyBinding base, InputUtil.Type type, int code) {
 		IKeyBinding parent = (IKeyBinding) base;
-		KeyBinding alternative = new AlternativeKeyBinding(base, base.getTranslationKey(), parent.nmuk_getNextChildId(), type, code, base.getCategory());
-		parent.nmuk_addAlternative(alternative);
+		KeyBinding alternative = new AlternativeKeyBinding(base, base.getTranslationKey(), parent.nmuk$getNextChildId(), type, code, base.getCategory());
+		parent.nmuk$addAlternative(alternative);
 		return alternative;
 	}
 
@@ -222,17 +237,17 @@ public class NMUKKeyBindingHelper {
 		// now the keybinding is a complete ghost and we can give it a new identity
 		// this code here should set all the values in the same way than the AlternativeKeyBinding contructor does
 		if (alternativeId == AlternativeKeyBinding.NO_ALTERNATIVE_ID) {
-			alternativeId = parent.nmuk_getNextChildId();
+			alternativeId = parent.nmuk$getNextChildId();
 		}
 		String newTranslationKey = AlternativeKeyBinding.makeAlternativeKeyTranslationKey(base.getTranslationKey(), alternativeId);
 		((KeyBindingAccessor) alternative).setTranslationKey(newTranslationKey);
 		((KeyBindingAccessor) alternative).setCategory(base.getCategory());
-		((IKeyBinding) alternative).nmuk_setAlternativeId(alternativeId);
-		((IKeyBinding) alternative).nmuk_setParent(base);
+		((IKeyBinding) alternative).nmuk$setAlternativeId(alternativeId);
+		((IKeyBinding) alternative).nmuk$setParent(base);
 
 		if (addToBase) {
 			// and finally we give the parent its new child
-			parent.nmuk_addAlternative(alternative);
+			parent.nmuk$addAlternative(alternative);
 		}
 	}
 
@@ -243,68 +258,107 @@ public class NMUKKeyBindingHelper {
 	// the constructor with the Object[] is required because older minecraft versions do not have a constructor with a String only
 	public static final Text RESET_TOOLTIP = new TranslatableText("nmuk.options.controls.reset.tooltip", new Object[0]);
 
+	// gui only
 	@SuppressWarnings("resource")
 	private static void saveOptions() {
 		MinecraftClient.getInstance().options.write();
 	}
 
+	// gui only
 	@SuppressWarnings("resource")
-	public static ControlsListWidget getControlsListWidgetFromCurrentScreen(Predicate<IKeybindsScreen> ifFunction) {
+	public static IControlsListWidget getControlsListWidgetFromCurrentScreen(Predicate<IKeybindsScreen> ifFunction) {
 		Screen currentScreen = MinecraftClient.getInstance().currentScreen;
 		if (currentScreen != null && KeybindsScreenVersionHelper.ACTUAL_KEYBINDS_SCREEN_CLASS.isAssignableFrom(currentScreen.getClass())) {
 			if (ifFunction.test((IKeybindsScreen) currentScreen)) {
-				return ((IKeybindsScreen) currentScreen).nmuk_getControlsList();
+				return ((IKeybindsScreen) currentScreen).nmuk$getControlsList();
 			}
 		}
 		return null;
 	}
 
-	public static ControlsListWidget.KeyBindingEntry findKeyBindingEntry(KeyBinding keyBinding, ControlsListWidget listWidget) {
-		List<Entry<?>> entries = getControlsListWidgetEntries(listWidget);
-		for (Entry<?> e : entries) {
-			if (e instanceof ControlsListWidget.KeyBindingEntry) {
-				if (((KeyBindingEntryAccessor) e).getBinding() == keyBinding) {
-					return (ControlsListWidget.KeyBindingEntry) e;
+	/**
+	 *
+	 * @param entries
+	 * @param fromIndex inclusive. A negative value means: Start at the beginning
+	 * @param toIndex exclusive. A negative value means: Stop at the end
+	 * @param ifFunction
+	 * @return the index after {@code fromIndex} of the first keybinding that matches the {@code ifFunction}
+	 */
+	// gui only
+	public static int findKeyBindingEntryIndex(List<Entry<?>> entries, int fromIndex, int toIndex, Predicate<IKeyBindingEntry> ifFunction) {
+		int end = toIndex < 0 ? entries.size() : Math.min(entries.size(), toIndex);
+		for (int i = Math.max(fromIndex, 0); i < end; i++) {
+			Entry<?> entry = entries.get(i);
+			if (entry != null && KeyBindingEntryVersionHelper.ACTUAL_KEYBINDING_ENTRY_CLASS.isAssignableFrom(entry.getClass())) {
+				if (ifFunction.test((IKeyBindingEntry) entry)) {
+					return i;
 				}
 			}
 		}
-		return null;
+		return -1;
 	}
 
-	public static void removeAlternativeKeyBinding_OptionsScreen(KeyBinding keyBinding, ControlsListWidget listWidget, ControlsListWidget.KeyBindingEntry entry) {
+	private static class EntryListWithIndex {
+		public List<Entry<?>> entries;
+		public int index;
+
+		public EntryListWithIndex(List<Entry<?>> entries, int index) {
+			this.entries = entries;
+			this.index = index;
+		}
+
+		public static EntryListWithIndex[] createFromEntryLists(List<Entry<?>>[] entries, Consumer<EntryListWithIndex> eachTask) {
+			EntryListWithIndex[] ret = new EntryListWithIndex[entries.length];
+			for (int i = 0; i < entries.length; i++) {
+				ret[i] = new EntryListWithIndex(entries[i], 0);
+				if (eachTask != null) {
+					eachTask.accept(ret[i]);
+				}
+			}
+			return ret;
+		}
+	}
+
+	// fixed multi entries
+	public static void removeAlternativeKeyBinding_OptionsScreen(KeyBinding keyBinding, IControlsListWidget listWidget) {
 		// if this method is called outside of the gui code and search the gui
 		if (listWidget == null) {
-			listWidget = getControlsListWidgetFromCurrentScreen(keybindsScreen -> keybindsScreen.nmuk_getSelectedKeyBinding() == keyBinding);
+			listWidget = getControlsListWidgetFromCurrentScreen(keybindsScreen -> keybindsScreen.nmuk$getSelectedKeyBinding() == keyBinding);
 			// not found
 			if (listWidget == null) {
 				return;
 			}
 		}
 
-		// if the entry is not given search the entry with this keyBinding
-		if (entry == null) {
-			entry = findKeyBindingEntry(keyBinding, listWidget);
-			// not found
-			if (entry == null) {
-				return;
-			}
+		// we need to search the index in the entries
+		List<Entry<?>>[] entries = getControlsListWidgetEntries(listWidget);
+		int entryIndexInEntriesFirst = findKeyBindingEntryIndex(entries[0], -1, -1, keyBindingEntry -> keyBindingEntry.nmuk$getBinding() == keyBinding);
+		if (entryIndexInEntriesFirst == -1) {
+			return;
 		}
+		int[] finalWrapper = new int[] {entryIndexInEntriesFirst};
+		EntryListWithIndex[] entriesWithIndex = EntryListWithIndex.createFromEntryLists(entries, (entryWithIndex) -> {
+			entryWithIndex.index = finalWrapper[0] != -1 ? finalWrapper[0] : findKeyBindingEntryIndex(entryWithIndex.entries, -1, -1,
+				keyBindingEntry -> keyBindingEntry.nmuk$getBinding() == keyBinding);
+			finalWrapper[0] = -1;
+		});
 
-		KeyBinding base = ((IKeyBinding) keyBinding).nmuk_getParent();
-		int indexInBase = ((IKeyBinding) base).nmuk_removeAlternative(keyBinding);
+		KeyBinding base = ((IKeyBinding) keyBinding).nmuk$getParent();
+		int indexInBase = ((IKeyBinding) base).nmuk$removeAlternative(keyBinding);
 		unregisterKeyBindingQuerying(keyBinding);
 		unregisterKeyBindingGUI(keyBinding);
 
-		List<Entry<?>> entries = getControlsListWidgetEntries(listWidget);
-		int indexInEntries = entries.indexOf(entry);
-		entries.remove(indexInEntries);
-		updateDefaultAlternativesInBase(base, indexInBase, listWidget, entries, indexInEntries);
+		for (EntryListWithIndex entryWithIndex : entriesWithIndex) {
+			entryWithIndex.entries.remove(entryWithIndex.index);
+		}
+		updateDefaultAlternativesInBase(base, indexInBase, listWidget, entriesWithIndex);
 
 		// do it like vanilla and save directly
 		saveOptions();
 	}
 
-	private static void updateDefaultAlternativesInBase(KeyBinding base, int indexInBase, ControlsListWidget listWidget, List<Entry<?>> entries, int indexInEntries) {
+	// fixed multi entries
+	private static void updateDefaultAlternativesInBase(KeyBinding base, int indexInBase, IControlsListWidget listWidget, EntryListWithIndex[] entriesWithIndex) {
 		if (indexInBase == -1) {
 			// not removed: nothing changed and maybe even the list is empty
 			return;
@@ -315,7 +369,7 @@ public class NMUKKeyBindingHelper {
 			return;
 		}
 		// update the defaults
-		List<KeyBinding> alternatives = ((IKeyBinding) base).nmuk_getAlternatives();
+		List<KeyBinding> alternatives = ((IKeyBinding) base).nmuk$getAlternatives();
 		int minSize = Math.min(alternatives.size(), defaultAlternatives.size());
 		for (int i = indexInBase; i < minSize; i++) {
 			KeyBinding currentAlt = alternatives.get(i);
@@ -324,7 +378,7 @@ public class NMUKKeyBindingHelper {
 				continue;
 			}
 			Key boundKey = ((KeyBindingAccessor) currentAlt).getBoundKey();
-			makeKeyBindingAlternativeOf(base, newAlt, ((IKeyBinding) currentAlt).nmuk_getAlternativeId(), false);
+			makeKeyBindingAlternativeOf(base, newAlt, ((IKeyBinding) currentAlt).nmuk$getAlternativeId(), false);
 			newAlt.setBoundKey(boundKey);
 			// important to first unregister the current one before registering the new one
 			unregisterKeyBindingQuerying(currentAlt);
@@ -335,28 +389,33 @@ public class NMUKKeyBindingHelper {
 			alternatives.set(i, newAlt);
 
 			// update gui entries
+			IKeyBindingEntry newEntry = createKeyBindingEntry(listWidget, newAlt);
 			int iRelToStart = (i - indexInBase);
-			int indexEntry = indexInEntries + iRelToStart;
-			entries.remove(indexEntry);
-			ControlsListWidget.KeyBindingEntry newEntry = createKeyBindingEntry(listWidget, newAlt, ENTRY_NAME);
-			entries.add(indexEntry, newEntry);
+
+			for (EntryListWithIndex entryWithIndex : entriesWithIndex) {
+				int indexEntry = entryWithIndex.index + iRelToStart;
+				entryWithIndex.entries.remove(indexEntry);
+				entryWithIndex.entries.add(indexEntry, (Entry<?>) newEntry);
+			}
 		}
 	}
 
+	// gui only
 	private static int getExistingKeyIsUnboundIndex(KeyBinding binding) {
 		if (binding.isUnbound()) {
 			return -1;
 		}
-		List<KeyBinding> alternatives = ((IKeyBinding) binding).nmuk_getAlternatives();
+		List<KeyBinding> alternatives = ((IKeyBinding) binding).nmuk$getAlternatives();
 		if (alternatives != null) {
 			Optional<KeyBinding> unboundAlternative = alternatives.stream().filter(alternative -> alternative.isUnbound()).findFirst();
 			if (unboundAlternative.isPresent()) {
-				return ((IKeyBinding) unboundAlternative.get()).nmuk_getIndexInParent();
+				return ((IKeyBinding) unboundAlternative.get()).nmuk$getIndexInParent();
 			}
 		}
 		return -2;
 	}
 
+	// gui only
 	@SuppressWarnings("resource")
 	private static boolean showToastIfExistingKeyIsUnbound(KeyBinding binding) {
 		int index = getExistingKeyIsUnboundIndex(binding);
@@ -373,63 +432,112 @@ public class NMUKKeyBindingHelper {
 		return false;
 	}
 
-	public static KeyBindingEntry addNewAlternativeKeyBinding_OptionsScreen(KeyBinding baseKeyBinding, ControlsListWidget listWidget, KeyBindingEntry entry) {
+	// gui only
+	private static void addEntryAsLastAlternativeEntry(List<Entry<?>> entries, IKeyBindingEntry addToEntry, int maxSearchRange, Entry<?> addEntry) {
+		int entryIndexInEntries = getLastAlternativeEntryIndex(entries, addToEntry, maxSearchRange);
+		if (entryIndexInEntries == -1) {
+			// should never happen since the add button was pressend on an entry
+			entryIndexInEntries = 0;
+		}
+		entries.add(entryIndexInEntries, addEntry);
+	}
+
+	// gui only
+	private static int getLastAlternativeEntryIndex(List<Entry<?>> entries, IKeyBindingEntry addToEntry, int maxSearchRange) {
+		for (int i = 0, entriesSize = entries.size(); i < entriesSize; i++) {
+			if (entries.get(i) == addToEntry) {
+				// found baseKeyBinding's entry
+				// now search for insert position
+				int fromIndex = i + 1;
+				int toIndex = Math.min(entriesSize, fromIndex + maxSearchRange);
+				int entryIndexInEntries = findKeyBindingEntryIndex(entries, fromIndex, toIndex, keyBindingEntry -> {
+					return ((IKeyBinding) keyBindingEntry.nmuk$getBinding()).nmuk$getParent() != addToEntry.nmuk$getBinding();
+				});
+				// if it gets not be found that means we reached the search end (list size or upper limit index)
+				if (entryIndexInEntries == -1) {
+					// if toIndex was was not the list end
+					// we stopped earlier because of the upper limit
+					// in that case we return the upper limit. (is done implicit with toIndex. Because toIndex == entriesSize)
+
+					// if it was the list end
+					// we return the list end
+					entryIndexInEntries = toIndex;
+				}
+				return entryIndexInEntries;
+			}
+		}
+		return -1;
+	}
+
+	// fixed multi entries
+	public static IKeyBindingEntry addNewAlternativeKeyBinding_OptionsScreen(KeyBinding baseKeyBinding, IControlsListWidget listWidget, IKeyBindingEntry entry) {
 		if (showToastIfExistingKeyIsUnbound(baseKeyBinding)) {
 			return null;
 		}
 
 		KeyBinding altBinding = getOrCreateAlternativeKeyBinding(baseKeyBinding);
 		registerKeyBindingGUI(altBinding);
-		KeyBindingEntry altEntry = createKeyBindingEntry(listWidget, altBinding, ENTRY_NAME);
-		if (altEntry != null) {
-			List<Entry<?>> entries = getControlsListWidgetEntries(listWidget);
-			for (int i = 0, entriesSize = entries.size(); i < entriesSize; i++) {
-				if (entries.get(i) == entry) {
-					i += ((IKeyBinding) baseKeyBinding).nmuk_getAlternativesCount();
-					entries.add(i, altEntry);
-					return altEntry;
-				}
-			}
+		// upper limit
+		int baseKeyBindingAlternativeCount = ((IKeyBinding) baseKeyBinding).nmuk$getAlternativesCount();
+		IKeyBindingEntry altEntry = createKeyBindingEntry(listWidget, altBinding);
+
+		for (List<Entry<?>> entries : getControlsListWidgetEntries(listWidget)) {
+			addEntryAsLastAlternativeEntry(entries, entry, baseKeyBindingAlternativeCount, (Entry<?>) altEntry);
 		}
-		NMUK.log(Level.ERROR, "Failed to create new KeyBindingEntry in options GUI!!");
-		return null;
+		return altEntry;
 	}
 
+	// fixed multi entries
 	@SuppressWarnings("resource")
-	public static void resetAlternativeKeyBindings_OptionsScreen(KeyBinding baseKeyBinding, ControlsListWidget listWidget, KeyBindingEntry entry) {
-		List<KeyBinding> alternatives = ((IKeyBinding) baseKeyBinding).nmuk_getAlternatives();
+	public static void resetAlternativeKeyBindings_OptionsScreen(KeyBinding baseKeyBinding, IControlsListWidget listWidget, IKeyBindingEntry entry) {
+		// TODO: if the just added entry is not visible in the screen (because scrolled too far up)
+		// set the srollAmount so that is is visible
+
+		List<KeyBinding> alternatives = ((IKeyBinding) baseKeyBinding).nmuk$getAlternatives();
 		// we make a copy of the defaultAlternatives here because we remove some elements for calculation
 		List<KeyBinding> defaultAlternatives = new ArrayList<>(NMUKKeyBindingHelper.defaultAlternatives.get(baseKeyBinding));
-		List<Entry<?>> entries = getControlsListWidgetEntries(listWidget);
-		int childrenStartEntryPos = entries.indexOf(entry) + 1;
 
-		int alternativesSize = alternatives.size();
+		List<KeyBinding> defaultAlternativesAlreadyKnown = Collections.emptyList();
+		int alternativesSize = alternatives == null ? 0 : alternatives.size();
 		boolean changed = false;
-		Iterator<KeyBinding> iterator = alternatives.iterator();
-		while (iterator.hasNext()) {
-			KeyBinding alternative = iterator.next();
-			if (!defaultAlternatives.contains(alternative)) {
-				// if alternative is not a default alternative
-				// unregister it
-				unregisterKeyBindingQuerying(alternative);
-				unregisterKeyBindingGUI(alternative);
-				iterator.remove();
-				changed = true;
+		if (alternativesSize > 0) {
+			Iterator<KeyBinding> iterator = alternatives.iterator();
+			while (iterator.hasNext()) {
+				KeyBinding alternative = iterator.next();
+				if (!defaultAlternatives.contains(alternative)) {
+					// if alternative is not a default alternative
+					// unregister it
+					unregisterKeyBindingQuerying(alternative);
+					unregisterKeyBindingGUI(alternative);
+					iterator.remove();
+					changed = true;
+				}
 			}
-		}
-		// alternatives now only contains the default alternatives we already knew
-		List<KeyBinding> defaultAlternativesAlreadyKnown = new ArrayList<>(alternatives);
 
-		// remove all entries from gui
-		entries.subList(childrenStartEntryPos, childrenStartEntryPos + alternativesSize).clear();
-		// clear alternatives of base
-		alternatives.clear();
+			// alternatives now only contains the default alternatives we already knew
+			defaultAlternativesAlreadyKnown = new ArrayList<>(alternatives);
+			// clear alternatives of base
+			alternatives.clear();
+		}
+
+		// remove all alternative entries from gui
+		List<Entry<?>>[] entries = getControlsListWidgetEntries(listWidget);
+		@SuppressWarnings("unlikely-arg-type")
+		EntryListWithIndex[] entriesWithIndex = EntryListWithIndex.createFromEntryLists(entries, (entryWithIndex) -> {
+			entryWithIndex.index = entryWithIndex.entries.indexOf(entry) + 1;
+			int entryIndexInEntries = getLastAlternativeEntryIndex(entryWithIndex.entries, entry, alternativesSize);
+			entryWithIndex.entries.subList(entryWithIndex.index, entryIndexInEntries).clear();
+		});
 
 		for (KeyBinding defaultAlternative : defaultAlternatives) {
-			KeyBindingEntry newEntry = createKeyBindingEntry(listWidget, defaultAlternative, ENTRY_NAME);
-			entries.add(childrenStartEntryPos++, newEntry);
+			IKeyBindingEntry newEntry = createKeyBindingEntry(listWidget, defaultAlternative);
+
+			for (EntryListWithIndex entryWithIndex : entriesWithIndex) {
+				entryWithIndex.entries.add(entryWithIndex.index++, (Entry<?>) newEntry);
+			}
+
 			resetSingleKeyBinding(defaultAlternative);
-			alternatives.add(defaultAlternative);
+			((IKeyBinding) baseKeyBinding).nmuk$addAlternative(defaultAlternative);
 			changed = true;
 		}
 
@@ -442,21 +550,37 @@ public class NMUKKeyBindingHelper {
 		}
 	}
 
-	public static List<Entry<?>> getControlsListWidgetEntries(ControlsListWidget controlsList) {
-		return ((IEntryListWidget) controlsList).getChildren();
+	// gui only
+	public static List<Entry<?>>[] getControlsListWidgetEntries(IControlsListWidget controlsList) {
+		List<Entry<?>>[] ret = null;
+		if (CompatibilityControlling.MOD_PRESENT_CONTROLLING) {
+			ret = new List[2];
+			ret[1] = (List<Entry<?>>) (Object) ((ICustomList) controlsList).nmuk$getAllEntries();
+		} else {
+			ret = new List[1];
+		}
+		ret[0] = ((IEntryListWidget) controlsList).nmuk$getChildren();
+		return ret;
 	}
 
-	public static KeyBindingEntry createKeyBindingEntry(ControlsListWidget listWidget, KeyBinding binding, Text text) {
+	// gui only
+	public static IKeyBindingEntry createKeyBindingEntry(IControlsListWidget listWidget, KeyBinding binding) {
 		try {
 			Object[] instanceArgs = null;
-			if (MinecraftVersionHelper.IS_AT_LEAST_V1_16) {
-				instanceArgs = new Object[] {listWidget, binding, text};
-			} else {
-				// if we are below minecraft 1.16 we can not parse the text to the constructors.
-				// And we do NOT set the text otherwise, because we "should" not need it
+			if (CompatibilityControlling.MOD_PRESENT_CONTROLLING) {
+				// text not needed. See below
 				instanceArgs = new Object[] {listWidget, binding};
+				return (IKeyBindingEntry) KeyEntry_contructor.newInstance(instanceArgs);
+			} else {
+				if (MinecraftVersionHelper.IS_AT_LEAST_V1_16) {
+					instanceArgs = new Object[] {listWidget, binding, ENTRY_NAME};
+				} else {
+					// if we are below minecraft 1.16 we can not parse the text to the constructors.
+					// And we do NOT set the text otherwise, because we "should" not need it
+					instanceArgs = new Object[] {listWidget, binding};
+				}
+				return (IKeyBindingEntry) KeyBindingEntry_contructor.newInstance(instanceArgs);
 			}
-			return KeyBindingEntry_contructor.newInstance(instanceArgs);
 		} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
 			NMUK.log(Level.ERROR, "Failed to create new instance of \"KeyBindingEntry\"");
 			e.printStackTrace();

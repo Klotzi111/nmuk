@@ -27,7 +27,7 @@ public abstract class MixinClickableWidget_1_14 implements IClickableWidget {
 	@Inject(method = "renderToolTip(II)V", at = @At("HEAD"), remap = false)
 	public void inject_renderToolTip(int mouseX, int mouseY, CallbackInfo callbackInfo) {
 		if (((Object) this) instanceof ButtonWidget) {
-			TooltipSupplier tooltipSupplier = ((IButtonWidget) this).getTooltipSupplier();
+			TooltipSupplier tooltipSupplier = ((IButtonWidget) this).nmuk$getTooltipSupplier();
 			if (tooltipSupplier != null) {
 				tooltipSupplier.onTooltip((ButtonWidget) (Object) this, null, mouseX, mouseY);
 			}
