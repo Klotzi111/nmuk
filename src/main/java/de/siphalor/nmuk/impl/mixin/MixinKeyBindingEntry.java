@@ -124,9 +124,4 @@ public abstract class MixinKeyBindingEntry implements IKeyBindingEntry {
 		}
 	}
 
-	@Redirect(method = {"method_25406(DDI)Z", "mouseReleased(DDI)Z"}, remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;mouseReleased(DDI)Z", ordinal = 1))
-	public boolean redirect_mouseReleased(ButtonWidget buttonWidget, double mouseX, double mouseY, int button) {
-		return false; // is returned when handler does not return
-	}
-
 }

@@ -13,20 +13,29 @@ import de.siphalor.nmuk.impl.compat.controlling.CompatibilityControlling;
 import de.siphalor.nmuk.impl.version.MinecraftVersionHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 
 @Environment(EnvType.CLIENT)
 public class NMUKMixinConfig implements IMixinConfigPlugin {
 
+	private static final boolean IS_DEV_ENV = FabricLoader.getInstance().isDevelopmentEnvironment();
+	private static boolean USE_PROD_HACK_MIXINS;
+
+	private List<String> finalAdditionalMixinClasses = new ArrayList<>();
+
 	public static final String MIXIN_VERSIONED_PACKAGE = "versioned";
 
-	public static String prependMixinPackage(String className) {
-		return MIXIN_VERSIONED_PACKAGE + "." + className;
+	public static String prependMixinPackage(String className, String prefix) {
+		if (prefix == null) {
+			return className;
+		}
+		return prefix + "." + className;
 	}
 
-	public static List<String> prependMixinPackages(List<String> classNames) {
+	public static List<String> prependMixinPackages(List<String> classNames, String prefix) {
 		List<String> ret = new ArrayList<>(classNames.size());
 		for (String className : classNames) {
-			ret.add(prependMixinPackage(className));
+			ret.add(prependMixinPackage(className, prefix));
 		}
 		return ret;
 	}
@@ -37,8 +46,38 @@ public class NMUKMixinConfig implements IMixinConfigPlugin {
 		Collections.addAll(additionalMixinClasses, mixinNames);
 	}
 
+	private static final String ENV_SUFFIX_NORMAL = "_normal";
+	private static final String ENV_SUFFIX_PROD_HACK = "_prodhack";
+
+	private void addEnvMixins(boolean normal, boolean prodhack, String... mixinNames) {
+		if (!normal && !prodhack) {
+			return;
+		}
+		if (normal && !prodhack && USE_PROD_HACK_MIXINS) {
+			return;
+		}
+		if (!normal && prodhack && !USE_PROD_HACK_MIXINS) {
+			return;
+		}
+
+		for (String mixinName : mixinNames) {
+			additionalMixinClasses.add(mixinName + (USE_PROD_HACK_MIXINS ? ENV_SUFFIX_PROD_HACK : ENV_SUFFIX_NORMAL));
+		}
+	}
+
+	private void pushMixinsToFinal() {
+		finalAdditionalMixinClasses.addAll(additionalMixinClasses);
+		additionalMixinClasses.clear();
+	}
+
 	@Override
 	public void onLoad(String mixinPackage) {
+		// enable hack mixins for mc version < 1.16
+		USE_PROD_HACK_MIXINS = !MinecraftVersionHelper.IS_AT_LEAST_V1_16;
+
+		addEnvMixins(true, true, "MixinKeyBindingEntry");
+		pushMixinsToFinal();
+
 		// versioned mixins
 
 		// TODO: add a json config file where for each mixinClassName a modID requirement can be made. Like in the fabric.mod.json#depends.
@@ -71,11 +110,14 @@ public class NMUKMixinConfig implements IMixinConfigPlugin {
 			addMixins("MixinKeyBinding_1_14");
 		}
 
-		additionalMixinClasses = prependMixinPackages(additionalMixinClasses);
+		additionalMixinClasses = prependMixinPackages(additionalMixinClasses, MIXIN_VERSIONED_PACKAGE);
+		pushMixinsToFinal();
 
 		if (CompatibilityControlling.MOD_PRESENT_CONTROLLING) {
-			String prefix = CompatibilityControlling.MOD_NAME_CONTROLLING;
-			addMixins(prefix + ".MixinSortOrder", prefix + ".MixinCustomList", prefix + ".MixinKeyEntry", prefix + ".MixinNewKeyBindsList", prefix + ".MixinNewKeyBindsScreen");
+			addMixins("MixinSortOrder", "MixinCustomList", "MixinKeyEntry", "MixinNewKeyBindsList", "MixinNewKeyBindsScreen");
+
+			additionalMixinClasses = prependMixinPackages(additionalMixinClasses, CompatibilityControlling.MOD_NAME_CONTROLLING);
+			pushMixinsToFinal();
 		}
 
 	}
@@ -97,7 +139,7 @@ public class NMUKMixinConfig implements IMixinConfigPlugin {
 
 	@Override
 	public List<String> getMixins() {
-		return additionalMixinClasses == null ? null : (additionalMixinClasses.isEmpty() ? null : additionalMixinClasses);
+		return finalAdditionalMixinClasses == null ? null : (finalAdditionalMixinClasses.isEmpty() ? null : finalAdditionalMixinClasses);
 	}
 
 	@Override

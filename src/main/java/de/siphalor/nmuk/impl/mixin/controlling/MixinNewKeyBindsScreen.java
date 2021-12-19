@@ -240,8 +240,7 @@ public abstract class MixinNewKeyBindsScreen extends KeybindsScreen implements I
 			target = "Lcom/blamejared/controlling/client/NewKeyBindsScreen;sortOrder:Lcom/blamejared/controlling/api/SortOrder;",
 			shift = Shift.BY,
 			by = -2,
-			ordinal = 0),
-		remap = false)
+			ordinal = 0))
 	public void init_addButtons(CallbackInfo ci) {
 		NewKeyBindsScreen _this = ((NewKeyBindsScreen) (Object) this);
 

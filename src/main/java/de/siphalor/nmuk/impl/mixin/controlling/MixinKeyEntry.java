@@ -109,7 +109,7 @@ public abstract class MixinKeyEntry implements IKeyBindingEntry {
 	// - interface methods
 
 	// + versioned part
-	@Inject(method = "<init>(Lcom/blamejared/controlling/client/NewKeyBindsList;Lnet/minecraft/client/option/KeyBinding;)V", at = @At("RETURN"))
+	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onConstruct(NewKeyBindsList outer, KeyBinding binding, CallbackInfo ci) {
 		MixinKeyBindingEntryImpl.init((IKeyBindingEntry) this, (IControlsListWidget) outer, binding);
 	}
@@ -121,7 +121,11 @@ public abstract class MixinKeyEntry implements IKeyBindingEntry {
 
 	@Inject(
 		method = "render",
-		at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/client/gui/widget/ButtonWidget;active:Z", shift = Shift.AFTER))
+		at = @At(
+			value = "FIELD",
+			opcode = Opcodes.PUTFIELD,
+			target = "Lnet/minecraft/client/gui/widget/ButtonWidget;active:Z",
+			shift = Shift.AFTER))
 	private void setResetButtonActive(CallbackInfo callbackInfo) {
 		MixinKeyBindingEntryImpl.setResetButtonActive((IKeyBindingEntry) this, (IControlsListWidget) listWidget, keybinding);
 	}
@@ -149,7 +153,7 @@ public abstract class MixinKeyEntry implements IKeyBindingEntry {
 	}
 
 	// ordinal 2 is required because in the byte code the second return statement is unfolded to a condition with two constant returns
-	@Inject(method = "mouseClicked(DDI)Z", remap = false, at = @At(value = "RETURN", ordinal = 2), require = 1, cancellable = true)
+	@Inject(method = "mouseClicked(DDI)Z", at = @At(value = "RETURN", ordinal = 2), require = 1, cancellable = true)
 	public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
 		// btnResetKeyBinding must be called and checked in here again because we need to redirect the real call because we must only call it once but do not want throw away the result of it
 		if (btnResetKeyBinding.mouseClicked(mouseX, mouseY, button) || alternativesButton.mouseClicked(mouseX, mouseY, button)) {
@@ -157,12 +161,12 @@ public abstract class MixinKeyEntry implements IKeyBindingEntry {
 		}
 	}
 
-	@Redirect(method = "mouseClicked(DDI)Z", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;mouseClicked(DDI)Z", ordinal = 1))
+	@Redirect(method = "mouseClicked(DDI)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;mouseClicked(DDI)Z", ordinal = 1))
 	public boolean redirect_mouseClicked(ButtonWidget buttonWidget, double mouseX, double mouseY, int button) {
 		return false; // is returned when handler does not return
 	}
 
-	@Inject(method = "mouseReleased(DDI)Z", remap = false, at = @At(value = "RETURN", ordinal = 1), require = 1, cancellable = true)
+	@Inject(method = "mouseReleased(DDI)Z", at = @At(value = "RETURN", ordinal = 1), require = 1, cancellable = true)
 	public void mouseReleased(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
 		// btnChangeKeyBinding must be called and checked in here again because we need to redirect the real call because we must only call it once but do not want throw away the result of it
 		// btnResetKeyBinding must be called because it is not called in the original code of controlling
@@ -171,7 +175,7 @@ public abstract class MixinKeyEntry implements IKeyBindingEntry {
 		}
 	}
 
-	@Redirect(method = "mouseReleased(DDI)Z", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;mouseReleased(DDI)Z", ordinal = 0))
+	@Redirect(method = "mouseReleased(DDI)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonWidget;mouseReleased(DDI)Z", ordinal = 0))
 	public boolean redirect_mouseReleased(ButtonWidget buttonWidget, double mouseX, double mouseY, int button) {
 		return false; // is returned when handler does not return
 	}
