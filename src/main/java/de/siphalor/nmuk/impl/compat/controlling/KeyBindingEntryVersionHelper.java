@@ -15,7 +15,7 @@ public class KeyBindingEntryVersionHelper {
 	public static final Class<?> CategoryEntry_class;
 
 	static {
-		if (CompatibilityControlling.MOD_PRESENT_CONTROLLING) {
+		if (CompatibilityControlling.MOD_PRESENT) {
 			NewKeyBindsList_class = MappingHelper.loadClass(NewKeyBindsList_CLASS_NAME);
 			KeyEntry_class = MappingHelper.loadClass(KeyEntry_CLASS_NAME);
 			CategoryEntry_class = MappingHelper.loadClass(CategoryEntry_CLASS_NAME);

@@ -10,7 +10,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
-version = "$mod_version+mc$minecraft_version".toString()
+version = "$mod_version+mc$minecraft_version"
 group = project.maven_group
 
 sourceSets {

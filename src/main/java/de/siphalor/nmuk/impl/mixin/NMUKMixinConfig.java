@@ -21,8 +21,6 @@ public class NMUKMixinConfig implements IMixinConfigPlugin {
 	private static final boolean IS_DEV_ENV = FabricLoader.getInstance().isDevelopmentEnvironment();
 	private static boolean USE_PROD_HACK_MIXINS;
 
-	private List<String> finalAdditionalMixinClasses = new ArrayList<>();
-
 	public static final String MIXIN_VERSIONED_PACKAGE = "versioned";
 
 	public static String prependMixinPackage(String className, String prefix) {
@@ -39,6 +37,8 @@ public class NMUKMixinConfig implements IMixinConfigPlugin {
 		}
 		return ret;
 	}
+
+	private List<String> finalAdditionalMixinClasses = new ArrayList<>();
 
 	private List<String> additionalMixinClasses = new ArrayList<>();
 
@@ -113,10 +113,10 @@ public class NMUKMixinConfig implements IMixinConfigPlugin {
 		additionalMixinClasses = prependMixinPackages(additionalMixinClasses, MIXIN_VERSIONED_PACKAGE);
 		pushMixinsToFinal();
 
-		if (CompatibilityControlling.MOD_PRESENT_CONTROLLING) {
+		if (CompatibilityControlling.MOD_PRESENT) {
 			addMixins("MixinSortOrder", "MixinCustomList", "MixinKeyEntry", "MixinNewKeyBindsList", "MixinNewKeyBindsScreen");
 
-			additionalMixinClasses = prependMixinPackages(additionalMixinClasses, CompatibilityControlling.MOD_NAME_CONTROLLING);
+			additionalMixinClasses = prependMixinPackages(additionalMixinClasses, CompatibilityControlling.MOD_NAME);
 			pushMixinsToFinal();
 		}
 

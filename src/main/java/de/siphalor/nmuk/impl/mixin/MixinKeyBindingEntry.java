@@ -63,6 +63,7 @@ public abstract class MixinKeyBindingEntry implements IKeyBindingEntry {
 	@Unique
 	private ButtonWidget alternativesButton;
 
+	// + interface methods
 	@Override
 	public void nmuk$setAlternativesButton(ButtonWidget alternativesButton) {
 		this.alternativesButton = alternativesButton;
@@ -87,7 +88,9 @@ public abstract class MixinKeyBindingEntry implements IKeyBindingEntry {
 	public ButtonWidget nmuk$getEditButton() {
 		return editButton;
 	}
+	// - interface methods
 
+	// + normal mixin
 	@Inject(method = "method_19870(Lnet/minecraft/client/option/KeyBinding;Lnet/minecraft/client/gui/widget/ButtonWidget;)V", at = @At("HEAD"))
 	private void resetButtonPressed(KeyBinding keyBinding, ButtonWidget widget, CallbackInfo ci) {
 		MixinKeyBindingEntryImpl.resetButtonPressed((IKeyBindingEntry) this, keyBinding, widget, (IControlsListWidget) listWidget);
@@ -108,6 +111,8 @@ public abstract class MixinKeyBindingEntry implements IKeyBindingEntry {
 		callbackInfoReturnable.setReturnValue(ImmutableList.of(editButton, resetButton, alternativesButton));
 	}
 
+	// + fix mouse* return values
+
 	// ordinal 2 is required because in the byte code the second return statement is unfolded to a condition with two constant returns
 	@Inject(method = {"method_25402(DDI)Z", "mouseClicked(DDI)Z"}, remap = false, at = @At(value = "RETURN", ordinal = 2), require = 1, cancellable = true)
 	public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
@@ -123,5 +128,8 @@ public abstract class MixinKeyBindingEntry implements IKeyBindingEntry {
 			cir.setReturnValue(true);
 		}
 	}
+	// - fix mouse* return values
+
+	// - normal mixin
 
 }

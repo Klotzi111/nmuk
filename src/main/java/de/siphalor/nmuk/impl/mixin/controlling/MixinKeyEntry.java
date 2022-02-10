@@ -152,6 +152,8 @@ public abstract class MixinKeyEntry implements IKeyBindingEntry {
 		callbackInfoReturnable.setReturnValue(ImmutableList.of(btnChangeKeyBinding, btnResetKeyBinding, alternativesButton));
 	}
 
+	// + fix mouse* return values
+
 	// ordinal 2 is required because in the byte code the second return statement is unfolded to a condition with two constant returns
 	@Inject(method = "mouseClicked(DDI)Z", at = @At(value = "RETURN", ordinal = 2), require = 1, cancellable = true)
 	public void mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
@@ -179,6 +181,7 @@ public abstract class MixinKeyEntry implements IKeyBindingEntry {
 	public boolean redirect_mouseReleased(ButtonWidget buttonWidget, double mouseX, double mouseY, int button) {
 		return false; // is returned when handler does not return
 	}
+	// - fix mouse* return values
 
 	// - normal mixin
 

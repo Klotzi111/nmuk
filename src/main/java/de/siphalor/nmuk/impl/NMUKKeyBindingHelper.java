@@ -70,7 +70,7 @@ public class NMUKKeyBindingHelper {
 	private static final String SIGNATURE_KeyEntry_contructor;
 
 	static {
-		if (CompatibilityControlling.MOD_PRESENT_CONTROLLING) {
+		if (CompatibilityControlling.MOD_PRESENT) {
 			SIGNATURE_KeyEntry_contructor = MappingHelper.createSignature("(%s%s)V", KeyBindingEntryVersionHelper.NewKeyBindsList_class, KeyBinding.class);
 			KeyEntry_contructor = MappingHelper.getConstructor(KeyBindingEntryVersionHelper.KeyEntry_class, SIGNATURE_KeyEntry_contructor);
 
@@ -553,7 +553,7 @@ public class NMUKKeyBindingHelper {
 	// gui only
 	public static List<Entry<?>>[] getControlsListWidgetEntries(IControlsListWidget controlsList) {
 		List<Entry<?>>[] ret = null;
-		if (CompatibilityControlling.MOD_PRESENT_CONTROLLING) {
+		if (CompatibilityControlling.MOD_PRESENT) {
 			ret = new List[2];
 			ret[1] = (List<Entry<?>>) (Object) ((ICustomList) controlsList).nmuk$getAllEntries();
 		} else {
@@ -567,7 +567,7 @@ public class NMUKKeyBindingHelper {
 	public static IKeyBindingEntry createKeyBindingEntry(IControlsListWidget listWidget, KeyBinding binding) {
 		try {
 			Object[] instanceArgs = null;
-			if (CompatibilityControlling.MOD_PRESENT_CONTROLLING) {
+			if (CompatibilityControlling.MOD_PRESENT) {
 				// text not needed. See below
 				instanceArgs = new Object[] {listWidget, binding};
 				return (IKeyBindingEntry) KeyEntry_contructor.newInstance(instanceArgs);
