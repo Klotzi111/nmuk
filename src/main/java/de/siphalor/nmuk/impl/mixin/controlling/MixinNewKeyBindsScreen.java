@@ -201,9 +201,16 @@ public abstract class MixinNewKeyBindsScreen extends KeybindsScreen implements I
 				List<Entry> children = ((ICustomList) nmuk$getControlsList()).nmuk$getAllEntries();
 				int childIndex = children.indexOf(keyEntry);
 				for (int i = childIndex - 1; i >= 0; i--) {
-					IKeyBindingEntry entry = (IKeyBindingEntry) children.get(i);
-					if (entry.nmuk$getBinding() == parent) {
-						return entry.nmuk$getBindingName().getString();
+					Entry entryRaw = children.get(i);
+					// in some rare cases entryRaw is of type CategoryEntry
+					// meaning that the newly added alternative keybinding was added not at the correct index
+					// in that case we continue searching until we find the real parent
+					// TODO: fix inserting newly added alternative keybindings at the correct index after its parent
+					if (entryRaw instanceof IKeyBindingEntry) {
+						IKeyBindingEntry entry = (IKeyBindingEntry) entryRaw;
+						if (entry.nmuk$getBinding() == parent) {
+							return entry.nmuk$getBindingName().getString();
+						}
 					}
 				}
 				// not found?!?
