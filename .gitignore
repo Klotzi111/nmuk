@@ -19,3 +19,6 @@ bin/
 
 #fabric
 run/
+
+#old runtime mappings
+oldMappings/

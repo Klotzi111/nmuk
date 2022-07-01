@@ -1,0 +1,185 @@
+{
+	"defaultConditions": {
+		"ENVIRONMENT": [
+			"CLIENT"
+		]
+	},
+	"mixinConditions": {
+		"GameOptionsAccessor": [
+			{}
+		],
+		"KeyBindingAccessor": [
+			{}
+		],
+		"KeyBindingRegistryImplAccessor": [
+			{}
+		],
+		"MixinEntryListWidget": [
+			{}
+		],
+		"MixinGameOptions": [
+			{}
+		],
+		"MixinKeyBinding": [
+			{}
+		],
+		"MixinKeyBindingEntry": [
+			{}
+		],
+		"versioned.MixinControlsListWidget_1_18": [
+			{
+				"minecraft": [
+					">=1.18"
+				]
+			}
+		],
+		"versioned.MixinKeybindsScreen": [
+			{
+				"minecraft": [
+					">=1.18"
+				]
+			}
+		],
+		"versioned.MixinControlsListWidget_1_14": [
+			{
+				"minecraft": [
+					"<1.18"
+				]
+			}
+		],
+		"versioned.MixinControlsOptionsScreen": [
+			{
+				"minecraft": [
+					"<1.18"
+				]
+			}
+		],
+		"versioned.MixinGameOptions_1_17": [
+			{
+				"minecraft": [
+					">=1.17"
+				]
+			}
+		],
+		"versioned.MixinGameOptions_1_16": [
+			{
+				"minecraft": [
+					">=1.16 <1.17"
+				]
+			}
+		],
+		"versioned.MixinGameOptions_1_14": [
+			{
+				"minecraft": [
+					">=1.14 <1.16"
+				]
+			}
+		],
+		"versioned.MixinButtonWidget_1_16": [
+			{
+				"minecraft": [
+					">=1.16"
+				]
+			}
+		],
+		"versioned.MixinButtonWidget_1_14": [
+			{
+				"minecraft": [
+					">=1.14 <1.16"
+				]
+			}
+		],
+		"versioned.MixinKeyBindingEntry_1_16": [
+			{
+				"minecraft": [
+					">=1.16"
+				]
+			}
+		],
+		"versioned.MixinKeyBindingEntry_1_14": [
+			{
+				"minecraft": [
+					">=1.14 <1.16"
+				]
+			}
+		],
+		"versioned.MixinClickableWidget_1_14": [
+			{
+				"minecraft": [
+					">=1.14  <1.16"
+				]
+			}
+		],
+		"versioned.MixinScreen_1_14": [
+			{
+				"minecraft": [
+					">=1.14  <1.16"
+				]
+			}
+		],
+		"versioned.MixinKeyBinding_1_15": [
+			{
+				"minecraft": [
+					">=1.15"
+				]
+			}
+		],
+		"versioned.MixinKeyBinding_1_14": [
+			{
+				"minecraft": [
+					"<1.15"
+				]
+			}
+		],
+		"controlling.MixinSortOrder": [
+			{
+				"minecraft": [
+					">=1.18"
+				],
+				"controlling": [
+					">=9.0"
+				]
+			}
+		],
+		"controlling.MixinCustomList": [
+			{
+				"minecraft": [
+					">=1.18"
+				],
+				"controlling": [
+					">=9.0"
+				]
+			}
+		],
+		"controlling.MixinKeyEntry": [
+			{
+				"minecraft": [
+					">=1.18"
+				],
+				"controlling": [
+					">=9.0"
+				]
+			}
+		],
+		"controlling.MixinNewKeyBindsList": [
+			{
+				"minecraft": [
+					">=1.18"
+				],
+				"controlling": [
+					">=9.0"
+				]
+			}
+		],
+		"controlling.MixinNewKeyBindsScreen": [
+			{
+				"minecraft": [
+					">=1.18"
+				],
+				"controlling": [
+					">=9.0"
+				]
+			}
+		]
+	}
+}

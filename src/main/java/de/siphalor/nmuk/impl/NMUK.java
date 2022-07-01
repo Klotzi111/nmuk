@@ -25,10 +25,11 @@ import net.fabricmc.api.ClientModInitializer;
 
 public class NMUK implements ClientModInitializer {
 
-	public static Logger LOGGER = LogManager.getLogger();
-
 	public static final String MOD_ID = "nmuk";
 	public static final String MOD_NAME = "No More Useless Keys";
+
+	private static final String LOG_PREFIX = "[" + MOD_NAME + "] ";
+	public static Logger LOGGER = LogManager.getLogger();
 
 	@Override
 	public void onInitializeClient() {
@@ -36,7 +37,10 @@ public class NMUK implements ClientModInitializer {
 	}
 
 	public static void log(Level level, String message) {
-		LOGGER.log(level, "[" + MOD_NAME + "] " + message);
+		LOGGER.log(level, LOG_PREFIX + message);
 	}
 
+	public static void logException(Level level, Throwable e) {
+		LOGGER.catching(level, e);
+	}
 }

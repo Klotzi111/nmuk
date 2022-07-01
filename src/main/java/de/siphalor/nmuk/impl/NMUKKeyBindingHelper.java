@@ -17,78 +17,42 @@
 
 package de.siphalor.nmuk.impl;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.ApiStatus;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 
+import de.klotzi111.fabricmultiversionhelper.api.text.TextWrapper;
 import de.siphalor.nmuk.impl.compat.controlling.CompatibilityControlling;
 import de.siphalor.nmuk.impl.compat.controlling.KeyBindingEntryVersionHelper;
 import de.siphalor.nmuk.impl.duck.*;
 import de.siphalor.nmuk.impl.duck.controlling.ICustomList;
-import de.siphalor.nmuk.impl.mapping.MappingHelper;
 import de.siphalor.nmuk.impl.mixin.GameOptionsAccessor;
 import de.siphalor.nmuk.impl.mixin.KeyBindingAccessor;
 import de.siphalor.nmuk.impl.mixin.KeyBindingRegistryImplAccessor;
 import de.siphalor.nmuk.impl.version.KeybindsScreenVersionHelper;
-import de.siphalor.nmuk.impl.version.MinecraftVersionHelper;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.client.gui.screen.option.ControlsListWidget.KeyBindingEntry;
 import net.minecraft.client.gui.widget.EntryListWidget.Entry;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.InputUtil.Key;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 @SuppressWarnings("unchecked")
 @ApiStatus.Internal
 public class NMUKKeyBindingHelper {
 
-	private static final Constructor<KeyBindingEntry> KeyBindingEntry_contructor;
-
-	private static final String SIGNATURE_KeyBindingEntry_contructor_1_14 = MappingHelper.createSignature("(%s%s)V", ControlsListWidget.class, KeyBinding.class);
-	private static final String SIGNATURE_KeyBindingEntry_contructor_1_16 = MappingHelper.createSignature("(%s%s%s)V", ControlsListWidget.class, KeyBinding.class, Text.class);
-
-	// from controlling
-	private static final Constructor<?> KeyEntry_contructor;
-
-	private static final String SIGNATURE_KeyEntry_contructor;
-
-	static {
-		if (CompatibilityControlling.MOD_PRESENT) {
-			SIGNATURE_KeyEntry_contructor = MappingHelper.createSignature("(%s%s)V", KeyBindingEntryVersionHelper.NewKeyBindsList_class, KeyBinding.class);
-			KeyEntry_contructor = MappingHelper.getConstructor(KeyBindingEntryVersionHelper.KeyEntry_class, SIGNATURE_KeyEntry_contructor);
-
-			KeyBindingEntry_contructor = null;
-		} else {
-			String signature = SIGNATURE_KeyBindingEntry_contructor_1_14;
-			if (MinecraftVersionHelper.IS_AT_LEAST_V1_16) {
-				signature = SIGNATURE_KeyBindingEntry_contructor_1_16;
-			}
-			KeyBindingEntry_contructor = (Constructor<KeyBindingEntry>) MappingHelper.getConstructor(KeyBindingEntry.class, signature);
-
-			SIGNATURE_KeyEntry_contructor = null;
-			KeyEntry_contructor = null;
-		}
-	}
-
 	private static void changeKeysAll(GameOptionsAccessor options, Function<KeyBinding[], KeyBinding[]> changeFunction) {
-		options.setKeysAll(changeFunction.apply(options.getKeysAll()));
+		options.setAllKeys(changeFunction.apply(options.getAllKeys()));
 	}
 
 	@SuppressWarnings("unused")
@@ -109,7 +73,7 @@ public class NMUKKeyBindingHelper {
 		GameOptionsAccessor options = getGameOptionsAccessor();
 		if (options != null) { // if options == null: Game is during initialization - this is handled by Fabric Api already
 			// this adds the keybindings to the options gui
-			changeKeysAll(options, keysAll -> ArrayUtils.add(keysAll, binding));
+			changeKeysAll(options, allKeys -> ArrayUtils.add(allKeys, binding));
 		}
 	}
 
@@ -124,7 +88,7 @@ public class NMUKKeyBindingHelper {
 
 		if (options != null) { // if options == null: Game is during initialization - this is handled by Fabric Api already
 			// this removes the keybinding from the options gui
-			changeKeysAll(options, keysAll -> ArrayUtils.removeElement(keysAll, binding));
+			changeKeysAll(options, allKeys -> ArrayUtils.removeElement(allKeys, binding));
 		}
 	}
 
@@ -154,7 +118,7 @@ public class NMUKKeyBindingHelper {
 		GameOptionsAccessor options = (GameOptionsAccessor) gameOptions;
 		if (options != null) { // if options == null: Game is during initialization - this is handled by Fabric Api already
 			// this adds the keybindings to the options gui
-			changeKeysAll(options, keysAll -> ArrayUtils.addAll(keysAll, bindings.toArray(new KeyBinding[0])));
+			changeKeysAll(options, allKeys -> ArrayUtils.addAll(allKeys, bindings.toArray(new KeyBinding[0])));
 		}
 	}
 	// - register/unregister keybindings
@@ -252,11 +216,11 @@ public class NMUKKeyBindingHelper {
 	}
 
 	// for options gui
-	public static final Text ENTRY_NAME = new LiteralText("    ->");
-	public static final Text ADD_ALTERNATIVE_TEXT = new LiteralText("+");
-	public static final Text REMOVE_ALTERNATIVE_TEXT = new LiteralText("x");
+	public static final Text ENTRY_NAME = TextWrapper.literal("    ->");
+	public static final Text ADD_ALTERNATIVE_TEXT = TextWrapper.literal("+");
+	public static final Text REMOVE_ALTERNATIVE_TEXT = TextWrapper.literal("x");
 	// the constructor with the Object[] is required because older minecraft versions do not have a constructor with a String only
-	public static final Text RESET_TOOLTIP = new TranslatableText("nmuk.options.controls.reset.tooltip", new Object[0]);
+	public static final Text RESET_TOOLTIP = TextWrapper.translatable("nmuk.options.controls.reset.tooltip", new Object[0]);
 
 	// gui only
 	@SuppressWarnings("resource")
@@ -389,7 +353,7 @@ public class NMUKKeyBindingHelper {
 			alternatives.set(i, newAlt);
 
 			// update gui entries
-			IKeyBindingEntry newEntry = createKeyBindingEntry(listWidget, newAlt);
+			IKeyBindingEntry newEntry = KeyBindingEntryVersionHelper.createKeyBindingEntry(listWidget, newAlt, ENTRY_NAME);
 			int iRelToStart = (i - indexInBase);
 
 			for (EntryListWithIndex entryWithIndex : entriesWithIndex) {
@@ -479,7 +443,7 @@ public class NMUKKeyBindingHelper {
 		registerKeyBindingGUI(altBinding);
 		// upper limit
 		int baseKeyBindingAlternativeCount = ((IKeyBinding) baseKeyBinding).nmuk$getAlternativesCount();
-		IKeyBindingEntry altEntry = createKeyBindingEntry(listWidget, altBinding);
+		IKeyBindingEntry altEntry = KeyBindingEntryVersionHelper.createKeyBindingEntry(listWidget, altBinding, ENTRY_NAME);
 
 		for (List<Entry<?>> entries : getControlsListWidgetEntries(listWidget)) {
 			addEntryAsLastAlternativeEntry(entries, entry, baseKeyBindingAlternativeCount, (Entry<?>) altEntry);
@@ -530,7 +494,7 @@ public class NMUKKeyBindingHelper {
 		});
 
 		for (KeyBinding defaultAlternative : defaultAlternatives) {
-			IKeyBindingEntry newEntry = createKeyBindingEntry(listWidget, defaultAlternative);
+			IKeyBindingEntry newEntry = KeyBindingEntryVersionHelper.createKeyBindingEntry(listWidget, defaultAlternative, ENTRY_NAME);
 
 			for (EntryListWithIndex entryWithIndex : entriesWithIndex) {
 				entryWithIndex.entries.add(entryWithIndex.index++, (Entry<?>) newEntry);
@@ -561,31 +525,6 @@ public class NMUKKeyBindingHelper {
 		}
 		ret[0] = ((IEntryListWidget) controlsList).nmuk$getChildren();
 		return ret;
-	}
-
-	// gui only
-	public static IKeyBindingEntry createKeyBindingEntry(IControlsListWidget listWidget, KeyBinding binding) {
-		try {
-			Object[] instanceArgs = null;
-			if (CompatibilityControlling.MOD_PRESENT) {
-				// text not needed. See below
-				instanceArgs = new Object[] {listWidget, binding};
-				return (IKeyBindingEntry) KeyEntry_contructor.newInstance(instanceArgs);
-			} else {
-				if (MinecraftVersionHelper.IS_AT_LEAST_V1_16) {
-					instanceArgs = new Object[] {listWidget, binding, ENTRY_NAME};
-				} else {
-					// if we are below minecraft 1.16 we can not parse the text to the constructors.
-					// And we do NOT set the text otherwise, because we "should" not need it
-					instanceArgs = new Object[] {listWidget, binding};
-				}
-				return (IKeyBindingEntry) KeyBindingEntry_contructor.newInstance(instanceArgs);
-			}
-		} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-			NMUK.log(Level.ERROR, "Failed to create new instance of \"KeyBindingEntry\"");
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 }

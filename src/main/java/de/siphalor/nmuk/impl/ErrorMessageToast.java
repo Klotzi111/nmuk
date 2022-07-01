@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import de.klotzi111.fabricmultiversionhelper.api.text.TextWrapper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -11,10 +12,8 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.toast.Toast;
 import net.minecraft.client.toast.ToastManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 @Environment(EnvType.CLIENT)
 public class ErrorMessageToast implements Toast {
@@ -119,7 +118,7 @@ public class ErrorMessageToast implements Toast {
 		}
 	}
 
-	private static final Text BIND_EXISTING_KEYS_FIRST = new TranslatableText("nmuk.options.controls.bind_existing_keys_first");
+	private static final Text BIND_EXISTING_KEYS_FIRST = TextWrapper.translatable("nmuk.options.controls.bind_existing_keys_first");
 
 	@Environment(EnvType.CLIENT)
 	public static enum Type {
@@ -140,9 +139,9 @@ public class ErrorMessageToast implements Toast {
 				if (args.length > 0) {
 					text = args[0].toString();
 				}
-				return new LiteralText(text);
+				return TextWrapper.literal(text);
 			}
-			return new TranslatableText(descriptionTranslationKey, args);
+			return TextWrapper.translatable(descriptionTranslationKey, args);
 		}
 	}
 }

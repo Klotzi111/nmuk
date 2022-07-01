@@ -34,6 +34,7 @@ import com.blamejared.controlling.client.FancyCheckbox;
 import com.blamejared.controlling.client.NewKeyBindsList.KeyEntry;
 import com.blamejared.controlling.client.NewKeyBindsScreen;
 
+import de.klotzi111.fabricmultiversionhelper.api.text.TextWrapper;
 import de.siphalor.nmuk.impl.compat.controlling.KeyBindingEntryVersionHelper;
 import de.siphalor.nmuk.impl.duck.IKeyBinding;
 import de.siphalor.nmuk.impl.duck.IKeyBindingEntry;
@@ -46,9 +47,8 @@ import net.minecraft.client.gui.screen.option.ControlsListWidget.Entry;
 import net.minecraft.client.gui.screen.option.KeybindsScreen;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.StringVisitable;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 @Pseudo
 @Mixin(NewKeyBindsScreen.class)
@@ -251,10 +251,10 @@ public abstract class MixinNewKeyBindsScreen extends KeybindsScreen implements I
 	public void init_addButtons(CallbackInfo ci) {
 		NewKeyBindsScreen _this = ((NewKeyBindsScreen) (Object) this);
 
-		TranslatableText alternativesOnlyText = new TranslatableText(ALTERNATIVES_ONLY_TRANSLATION_KEY);
+		Text alternativesOnlyText = TextWrapper.translatable(ALTERNATIVES_ONLY_TRANSLATION_KEY);
 		StringVisitable trimmedString = MinecraftClient.getInstance().textRenderer.trimToWidth(alternativesOnlyText, 155 - 5);
 
-		buttonAlternativesOnly = this.addDrawableChild(new FancyCheckbox(width / 2 - 155, height - 29 - 37, 11, 11, new LiteralText(trimmedString.getString()), false, btn -> {
+		buttonAlternativesOnly = addDrawableChild(new FancyCheckbox(width / 2 - 155, height - 29 - 37, 11, 11, TextWrapper.literal(trimmedString.getString()), false, btn -> {
 			alternativesOnly = btn.selected();
 			_this.filterKeys();
 		}));

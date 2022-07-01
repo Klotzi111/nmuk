@@ -37,18 +37,18 @@ public class MixinGameOptions_1_17 {
 	@Mutable
 	@Shadow
 	@Final
-	public KeyBinding[] keysAll;
+	public KeyBinding[] allKeys;
 
 	// Prevent nmuk keybindings from getting saved to the Vanilla options file
-	@Inject(method = "accept", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/client/option/GameOptions;keysAll:[Lnet/minecraft/client/option/KeyBinding;"))
+	@Inject(method = "accept", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/client/option/GameOptions;allKeys:[Lnet/minecraft/client/option/KeyBinding;"))
 	public void removeNMUKBindings(CallbackInfo ci) {
-		tempKeysAll = keysAll;
-		keysAll = Arrays.stream(keysAll).filter(binding -> !((IKeyBinding) binding).nmuk$isAlternative()).toArray(KeyBinding[]::new);
+		tempKeysAll = allKeys;
+		allKeys = Arrays.stream(allKeys).filter(binding -> !((IKeyBinding) binding).nmuk$isAlternative()).toArray(KeyBinding[]::new);
 	}
 
 	@Inject(method = "accept", at = @At(value = "INVOKE", target = "Lnet/minecraft/sound/SoundCategory;values()[Lnet/minecraft/sound/SoundCategory;"))
 	public void resetAllKeys(CallbackInfo ci) {
-		keysAll = tempKeysAll;
+		allKeys = tempKeysAll;
 	}
 
 }

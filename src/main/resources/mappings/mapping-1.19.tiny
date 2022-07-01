@@ -1,0 +1,269 @@
+tiny	2	0	official	intermediary	named
+c	egq	net/minecraft/class_339	net/minecraft/client/gui/widget/ClickableWidget
+	f	Z	q	field_22764	visible
+	f	Z	p	field_22763	active
+	f	Z	o	field_22762	hovered
+	f	Lrm;	a	field_22754	message
+	f	F	r	field_22765	alpha
+	f	Laaj;	j	field_22757	WIDGETS_TEXTURE
+	f	I	n	field_22761	y
+	f	I	m	field_22760	x
+	f	I	l	field_22759	height
+	f	I	k	field_22758	width
+	f	Z	b	field_22756	focused
+	m	(I)Z	h_	method_25351	isValidClickButton
+		p	1			button
+	m	(I)V	b	method_25358	setWidth
+		p	1			width
+	m	(Ldzt;IIF)V	b	method_25359	renderButton
+		p	1			matrices
+		p	4			delta
+		p	3			mouseY
+		p	2			mouseX
+	m	(DD)V	a	method_25348	onClick
+		p	1			mouseX
+		p	3			mouseY
+	m	(Z)V	d	method_25365	setFocused
+		p	1			focused
+	m	(DD)V	b	method_25357	onRelease
+		p	3			mouseY
+		p	1			mouseX
+	m	(Z)V	c	method_25363	onFocusedChanged
+		p	1			newFocused
+	m	(F)V	a	method_25350	setAlpha
+		p	1			alpha
+	m	(DDDD)V	a	method_25349	onDrag
+		p	7			deltaY
+		p	3			mouseY
+		p	5			deltaX
+		p	1			mouseX
+	m	(DD)Z	c	method_25361	clicked
+		p	1			mouseX
+		p	3			mouseY
+	m	(Lrm;)Lrt;	a	method_32602	getNarrationMessage
+		p	0			message
+	m	()Z	i	method_25370	isFocused
+	m	(Leiu;)V	b	method_37021	appendDefaultNarrations
+		p	1			builder
+	m	()Lrt;	ak_	method_25360	getNarrationMessage
+	m	(Lrm;)V	b	method_25355	setMessage
+		p	1			message
+	m	(Z)I	a	method_25356	getYImage
+		p	1			hovered
+	m	(Ldzt;II)V	a	method_25352	renderTooltip
+		p	1			matrices
+		p	2			mouseX
+		p	3			mouseY
+	m	(Ldzt;Leev;II)V	a	method_25353	renderBackground
+		p	1			matrices
+		p	4			mouseY
+		p	3			mouseX
+		p	2			client
+	m	()Z	f	method_25367	isHovered
+	m	()I	g	method_25368	getWidth
+	m	()Lrm;	h	method_25369	getMessage
+	m	()I	e	method_25364	getHeight
+	m	(Lfmb;)V	a	method_25354	playDownSound
+		p	1			soundManager
+	m	(IIIILrm;)V	<init>	<init>	<init>
+		p	1			x
+		p	3			width
+		p	2			y
+		p	5			message
+		p	4			height
+c	ehq	net/minecraft/class_364	net/minecraft/client/gui/Element
+	f	J	w_	field_37268	MAX_DOUBLE_CLICK_INTERVAL
+	m	(III)Z	b	method_16803	keyReleased
+		p	3			modifiers
+		p	2			scanCode
+		p	1			keyCode
+	m	(CI)Z	a	method_25400	charTyped
+		p	1			chr
+		p	2			modifiers
+	m	(DDI)Z	a	method_25402	mouseClicked
+		p	3			mouseY
+		p	5			button
+		p	1			mouseX
+	m	(DDIDD)Z	a	method_25403	mouseDragged
+		p	1			mouseX
+		p	3			mouseY
+		p	6			deltaX
+		p	5			button
+		p	8			deltaY
+	m	(DDI)Z	c	method_25406	mouseReleased
+		p	3			mouseY
+		p	5			button
+		p	1			mouseX
+	m	(Z)Z	b	method_25407	changeFocus
+		p	1			lookForwards
+	m	(III)Z	a	method_25404	keyPressed
+		p	2			scanCode
+		p	3			modifiers
+		p	1			keyCode
+	m	(DDD)Z	a	method_25401	mouseScrolled
+		p	5			amount
+		p	1			mouseX
+		p	3			mouseY
+	m	(DD)V	e	method_16014	mouseMoved
+		p	1			mouseX
+		p	3			mouseY
+	m	(DD)Z	a_	method_25405	isMouseOver
+		p	1			mouseX
+		p	3			mouseY
+c	ekj	net/minecraft/class_437	net/minecraft/client/gui/screen/Screen
+	f	J	s	field_33817	SCREEN_INIT_NARRATION_DELAY
+	f	J	w	field_33821	KEY_PRESS_NARRATION_DELAY
+	f	J	u	field_33819	MOUSE_MOVE_NARRATION_DELAY
+	f	Ljava/net/URI;	r	field_22784	clickedLink
+	f	J	y	field_33823	elementNarrationStartTime
+	f	Leev;	e	field_22787	client
+	f	Ljava/util/List;	q	field_33816	drawables
+	f	I	k	field_22790	height
+	f	Lrm;	d	field_22785	title
+	f	Ljava/util/Set;	b	field_22783	ALLOWED_PROTOCOLS
+	f	Lorg/slf4j/Logger;	a	field_22782	LOGGER
+	f	J	t	field_33818	NARRATOR_MODE_CHANGE_DELAY
+	f	Legb;	m	field_22793	textRenderer
+	f	J	v	field_33820	MOUSE_PRESS_SCROLL_NARRATION_DELAY
+	f	Lfdl;	f	field_22788	itemRenderer
+	f	J	z	field_33824	screenNarrationStartTime
+	f	Ljava/util/List;	o	field_22786	children
+	f	Lrm;	n	field_33814	SCREEN_USAGE_TEXT
+	f	I	c	field_32270	field_32270
+	f	Leix;	x	field_33822	narrator
+	f	Leis;	A	field_33813	selected
+	f	I	j	field_22789	width
+	f	Ljava/util/List;	p	field_33815	selectables
+	f	Z	l	field_22792	passEvents
+	m	(Leiu;)V	b	method_37056	addElementNarrations
+		p	1			builder
+	m	()Lrm;	af_	method_25435	getNarratedTitle
+	m	(Ldzt;)V	a_	method_25420	renderBackground
+		p	1			matrices
+	m	(Lehn;)Lehn;	a	method_37060	addDrawable
+		p	1			drawable
+	m	(Lehq;)Lehq;	d	method_37063	addDrawableChild
+		p	1			drawableElement
+	m	()V	n	method_41843	clearAndInit
+	m	(Ldzt;Ljava/util/List;II)V	c	method_25417	renderOrderedTooltip
+		p	1			matrices
+		p	2			lines
+		p	3			x
+		p	4			y
+	m	([Legq;)V	a	method_40041	hide
+		p	0			widgets
+	m	()V	r	method_37068	applyMouseMoveNarratorDelay
+	m	()Z	p	method_25442	hasShiftDown
+	m	(Ljava/net/URI;)V	a	method_25416	openLink
+		p	1			link
+	m	(Z)V	c	method_25428	confirmLink
+		p	1			open
+	m	(Lehq;)V	f	method_37066	remove
+		p	1			child
+	m	()V	t	method_37070	applyKeyPressNarratorDelay
+	m	()Z	ag_	method_25422	shouldCloseOnEsc
+	m	(Z)V	e	method_37065	narrateScreen
+		p	1			useTranslationsCache
+	m	()V	b	method_25426	init
+	m	(Ljava/util/List;)V	a	method_29638	filesDragged
+		p	1			paths
+	m	()V	w	method_37072	applyNarratorModeChangeDelay
+	m	(Ljava/lang/String;)Ljava/lang/String;	b	method_25413	method_25413
+	m	()V	ah_	method_25419	close
+	m	()V	d	method_25393	tick
+	m	(I)Z	f	method_25436	isCut
+		p	0			code
+	m	(Ldzt;Ljava/util/List;II)V	a	method_32633	renderTooltipFromComponents
+		p	3			x
+		p	4			y
+		p	1			matrices
+		p	2			components
+	m	(I)Z	h	method_25438	isCopy
+		p	0			code
+	m	()Z	h	method_37073	isNarratorActive
+	m	(Leev;II)V	b	method_25423	init
+		p	3			height
+		p	2			width
+		p	1			client
+	m	()Z	ai_	method_25421	shouldPause
+	m	(Leiu;)V	a	method_37062	addScreenNarrations
+		p	1			builder
+	m	(Ljava/lang/Runnable;Ljava/lang/String;Ljava/lang/String;)V	a	method_25412	wrapScreenError
+		p	2			screenName
+		p	1			errorTitle
+		p	0			task
+	m	(Ldzt;Lrm;II)V	b	method_25424	renderTooltip
+		p	1			matrices
+		p	4			y
+		p	3			x
+		p	2			text
+	m	(Lrv;)Z	a	method_25430	handleTextClick
+		p	1			style
+	m	(Lcaa;)Ljava/util/List;	a	method_25408	getTooltipFromItem
+		p	1			stack
+	m	(Lehq;)Lehq;	e	method_25429	addSelectableChild
+		p	1			child
+	m	()V	m	method_37067	clearChildren
+	m	(Ldzt;Lcaa;II)V	a	method_25409	renderTooltip
+		p	4			y
+		p	3			x
+		p	2			stack
+		p	1			matrices
+	m	(Ldzt;I)V	a	method_25433	renderBackground
+		p	1			matrices
+		p	2			vOffset
+	m	(Z)V	d	method_37064	narrateScreenIfNarrationEnabled
+		p	1			useTranslationsCache
+	m	(Ldzt;Lrv;II)V	a	method_25418	renderTextHoverEffect
+		p	2			style
+		p	1			matrices
+		p	4			y
+		p	3			x
+	m	()Z	o	method_25441	hasControlDown
+	m	(Ljava/util/List;Leis;)Lekj$a;	a	method_37061	findSelectedElementData
+		p	1			selectable
+		p	0			selectables
+	m	(Ljava/lang/String;CI)Z	a	method_25414	isValidCharacterForName
+		p	3			cursorPos
+		p	1			name
+		p	2			character
+	m	(Ldzt;Ljava/util/List;Ljava/util/Optional;II)V	a	method_32634	renderTooltip
+		p	5			y
+		p	4			x
+		p	3			data
+		p	2			lines
+		p	1			matrices
+	m	(J)V	a	method_37058	setElementNarrationDelay
+		p	1			delayMs
+	m	()V	s	method_37069	applyMousePressScrollNarratorDelay
+	m	()Z	q	method_25443	hasAltDown
+	m	(JZ)V	a	method_37059	setScreenNarrationDelay
+		p	1			delayMs
+		p	3			restartElementNarration
+	m	(I)V	e	method_25434	renderBackgroundTexture
+		p	1			vOffset
+	m	()V	v	method_37071	updateNarrator
+	m	(I)Z	g	method_25437	isPaste
+		p	0			code
+	m	()Lrm;	k	method_25440	getTitle
+	m	(Ldzt;Ljava/util/List;II)V	b	method_30901	renderTooltip
+		p	3			x
+		p	4			y
+		p	1			matrices
+		p	2			lines
+	m	(I)Z	i	method_25439	isSelectAll
+		p	0			code
+	m	(Ljava/util/List;Lbxn;)V	a	method_32635	method_32635
+		p	1			data
+	m	()V	e	method_25432	removed
+	m	(Leev;II)V	a	method_25410	resize
+		p	3			height
+		p	1			client
+		p	2			width
+	m	(Ljava/lang/String;Z)V	a	method_25415	insertText
+		p	2			override
+		p	1			text
+	m	(Lrm;)V	<init>	<init>	<init>
+		p	1			title
+c	egm	net/minecraft/class_4264	net/minecraft/client/gui/widget/PressableWidget
+	m	()V	d	method_25306	onPress

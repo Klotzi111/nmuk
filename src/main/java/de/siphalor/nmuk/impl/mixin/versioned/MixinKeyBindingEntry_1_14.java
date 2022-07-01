@@ -25,8 +25,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import de.klotzi111.fabricmultiversionhelper.api.text.TextWrapper;
 import de.siphalor.nmuk.impl.duck.IClickableWidget;
 import de.siphalor.nmuk.impl.duck.IControlsListWidget;
 import de.siphalor.nmuk.impl.duck.IKeyBindingEntry;
@@ -57,6 +59,11 @@ public abstract class MixinKeyBindingEntry_1_14 implements IKeyBindingEntry {
 		this.bindingName = bindingName.getString();
 	}
 
+	@Override
+	public Text nmuk$getBindingName() {
+		return TextWrapper.literal(bindingName);
+	}
+
 	@Inject(method = "<init>", at = @At("RETURN"))
 	public void onConstruct(ControlsListWidget outer, KeyBinding binding, CallbackInfo ci) {
 		MixinKeyBindingEntryImpl.init((IKeyBindingEntry) this, (IControlsListWidget) outer, binding);
@@ -83,6 +90,11 @@ public abstract class MixinKeyBindingEntry_1_14 implements IKeyBindingEntry {
 		at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/class_4185;active:Z", shift = Shift.AFTER, remap = false))
 	private void setResetButtonActive(CallbackInfo callbackInfo) {
 		MixinKeyBindingEntryImpl.setResetButtonActive((IKeyBindingEntry) this, (IControlsListWidget) listWidget, binding);
+	}
+
+	@Redirect(method = "mouseReleased(DDI)Z", remap = false, at = @At(value = "INVOKE", target = "Lnet/minecraft/class_4185;mouseReleased(DDI)Z", ordinal = 1))
+	public boolean redirect_mouseReleased(ButtonWidget buttonWidget, double mouseX, double mouseY, int button) {
+		return false; // is returned when handler does not return
 	}
 
 }

@@ -30,9 +30,16 @@
 	"mixins": [
 		"nmuk.mixins.json"
 	],
+	"custom": {
+		"modmenu:clientsideOnly": true
+	},
 	"depends": {
+		"minecraft": ">=1.14",
+		"fabric": "*",
 		"fabricloader": ">=0.4.0",
-		"fabric-key-binding-api-v1": "*",
+		"fabric-api-base": ">=0.1.2+de26dc4942",
+		"fabric-key-binding-api-v1": ">=1.0.2+4ea4772942",
+		"fabric-resource-loader-v0": ">=0.1.5+4ea4772942",
 		"transformerinterceptor": ">=1"
 	},
 	"suggests": {

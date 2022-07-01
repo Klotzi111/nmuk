@@ -54,19 +54,19 @@ public class MixinGameOptions {
 	@Mutable
 	@Shadow
 	@Final
-	public KeyBinding[] keysAll;
+	public KeyBinding[] allKeys;
 
 	@Inject(method = "write", at = @At("RETURN"))
 	public void save(CallbackInfo ci) {
 		try (PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(nmukOptionsFile), StandardCharsets.UTF_8))) {
-			for (KeyBinding binding : keysAll) {
+			for (KeyBinding binding : allKeys) {
 				if (((IKeyBinding) binding).nmuk$isAlternative() && !binding.isUnbound()) {
 					printWriter.println("key_" + binding.getTranslationKey() + ":" + binding.getBoundKeyTranslationKey());
 				}
 			}
 		} catch (FileNotFoundException e) {
 			NMUK.log(Level.ERROR, "Encountered an issue whilst writing nmuk options file");
-			e.printStackTrace();
+			NMUK.logException(Level.ERROR, e);
 		}
 	}
 
@@ -127,12 +127,12 @@ public class MixinGameOptions {
 					}
 				} catch (Throwable e) {
 					NMUK.log(Level.ERROR, "Encountered an issue whilst reading a line from nmuk options file");
-					e.printStackTrace();
+					NMUK.logException(Level.ERROR, e);
 				}
 			}
 		} catch (IOException e) {
 			NMUK.log(Level.ERROR, "Encountered an issue whilst loading nmuk options file");
-			e.printStackTrace();
+			NMUK.logException(Level.ERROR, e);
 		}
 
 		// here we remove default keybindings that the user deleted but are still present from the initialization at the moment

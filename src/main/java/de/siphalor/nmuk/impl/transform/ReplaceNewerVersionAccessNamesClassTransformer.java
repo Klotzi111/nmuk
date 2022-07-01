@@ -15,18 +15,21 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import de.klotzi111.fabricmultiversionhelper.api.mapping.MappingHelper;
+import de.klotzi111.fabricmultiversionhelper.api.mapping.VersionMappingsHelper;
+import de.klotzi111.fabricmultiversionhelper.api.version.MinecraftVersionHelper;
 import de.klotzi111.transformerinterceptor.api.event.ClassTransformer;
 import de.klotzi111.transformerinterceptor.api.event.ClassTransformerResult;
 import de.klotzi111.transformerinterceptor.impl.util.ClassUtil;
 import de.siphalor.nmuk.impl.NMUK;
-import de.siphalor.nmuk.impl.mapping.MappingHelper;
-import de.siphalor.nmuk.impl.version.MinecraftVersionHelper;
-import de.siphalor.nmuk.impl.version.VersionMappingsHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
+import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import net.fabricmc.mapping.tree.TinyTree;
 
+// TODO: clean this mess up! By making all the static fields construction time fields
 // TODO: export to a external library
 // TODO: maybe use the tinyremapper?
 public class ReplaceNewerVersionAccessNamesClassTransformer implements ClassTransformer {
@@ -43,6 +46,8 @@ public class ReplaceNewerVersionAccessNamesClassTransformer implements ClassTran
 	private static final String REMAP_CLASS_HIERARCHY_RESOURCE_PATH = "/remap/classHierarchy.json";
 
 	private static final Gson gson = new Gson();
+
+	private static final ModContainer MOD_CONTAINER = FabricLoader.getInstance().getModContainer("nmuk").get();
 
 	@SuppressWarnings("serial")
 	private static void loadClassNameSearchMemberNameClassesMap() {
@@ -63,13 +68,13 @@ public class ReplaceNewerVersionAccessNamesClassTransformer implements ClassTran
 	private static void loadLookupMappingResolver() {
 		Version compiledWithMinecraftSourceVersion = MinecraftVersionHelper.MINECRAFT_VERSION;
 		try {
-			compiledWithMinecraftSourceVersion = VersionMappingsHelper.getCompiledWithMinecraftSourceVersion();
+			compiledWithMinecraftSourceVersion = VersionMappingsHelper.getCompiledWithMinecraftSourceVersion(MOD_CONTAINER);
 		} catch (Exception e) {
 			// ignore
 			// this will happen when launching with the mod in dev mode without exporting
 		}
-		TinyTree tinyTree = VersionMappingsHelper.getMappings(compiledWithMinecraftSourceVersion);
-		LOOKUP_MAPPING_RESOLVER = VersionMappingsHelper.getMappingResolver(tinyTree, MappingHelper.NAMESPACE_NAMED);
+		TinyTree tinyTree = VersionMappingsHelper.getMappings(MOD_CONTAINER, compiledWithMinecraftSourceVersion);
+		LOOKUP_MAPPING_RESOLVER = VersionMappingsHelper.createMappingResolver(tinyTree, MappingHelper.NAMESPACE_NAMED);
 	}
 
 	private static void remapClassNameMapKeys() {
@@ -188,6 +193,7 @@ public class ReplaceNewerVersionAccessNamesClassTransformer implements ClassTran
 		for (String newOwner : set) {
 			// TODO: map everything with current mc version mapping down to intermediary and then back up to named with other version
 			// TODO: map desc down to intermediary
+			// This looks very similar to what is done in MixinIntermediaryDevRemapper
 			String mappedName = memberType.mapFunction.map(MappingHelper.NAMESPACE_INTERMEDIARY, newOwner, name, desc);
 
 			if (!mappedName.equals(name)) {

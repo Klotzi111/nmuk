@@ -58,13 +58,6 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 	private KeyBinding parent = null;
 
 	@Override
-	public void nmuk$setPressed(boolean pressed) {
-		// intentionally call the method even though we could just set the field
-		// to be more compatible with oder mixins in that method
-		((KeyBinding) (Object) this).setPressed(pressed);
-	}
-
-	@Override
 	public int nmuk$getNextChildId() {
 		return nextChildId++;
 	}
@@ -150,9 +143,10 @@ public abstract class MixinKeyBinding implements IKeyBinding {
 	}
 
 	@Inject(method = "onKeyPressed", at = @At(value = "FIELD", target = "Lnet/minecraft/client/option/KeyBinding;timesPressed:I"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
-	private static void onKeyPressed(InputUtil.Key key, CallbackInfo callbackInfo, KeyBinding binding) {
+	private static void onKeyPressedInjection(InputUtil.Key key, CallbackInfo callbackInfo, KeyBinding binding) {
 		KeyBinding parent = ((IKeyBinding) binding).nmuk$getParent();
 		if (parent != null) {
+			// increment the press count of the parent instead of the child key binding
 			((KeyBindingAccessor) parent).setTimesPressed(((KeyBindingAccessor) parent).getTimesPressed() + 1);
 			callbackInfo.cancel();
 		}

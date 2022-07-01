@@ -48,6 +48,7 @@ public class NMUKAlternatives {
 	 *
 	 * @param base The base keybinding to create an alternative for
 	 * @param code The keycode to use as default for the alternative
+	 * @deprecated use {@link #createAndGet(KeyBinding, int)} instead
 	 */
 	@Deprecated
 	public static void create(KeyBinding base, int code) {
@@ -75,6 +76,7 @@ public class NMUKAlternatives {
 	 * @param base The base keybinding to create an alternative for
 	 * @param inputType The {@link InputUtil.Type} that defines the type of the code
 	 * @param code The input code
+	 * @deprecated use {@link #createAndGet(KeyBinding, net.minecraft.client.util.InputUtil.Type, int)} instead
 	 */
 	@Deprecated
 	public static void create(KeyBinding base, InputUtil.Type inputType, int code) {
@@ -112,6 +114,7 @@ public class NMUKAlternatives {
 	 *
 	 * @param base The base keybinding to create an alternative for
 	 * @param alternative The alternative keybinding
+	 * @deprecated use {@link #create(KeyBinding, KeyBinding)} instead
 	 */
 	@Deprecated
 	public static void create(KeyBinding base, KeyBinding alternative) {

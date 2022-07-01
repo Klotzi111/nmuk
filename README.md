@@ -1,7 +1,7 @@
-# No More Useless Keys
-[![curseforge downloads](http://cf.way2muchnoise.eu/full_nmuk_downloads.svg)](https://minecraft.curseforge.com/projects/nmuk)
-[![curseforge mc versions](http://cf.way2muchnoise.eu/versions/nmuk.svg)](https://minecraft.curseforge.com/projects/nmuk)
+# Note
+This is a fork of [Siphalor/nmuk](https://github.com/Siphalor/nmuk)
 
+# No More Useless Keys
 ![logo](src/main/resources/assets/nmuk/icon.png?raw=true)
 
 ## About
@@ -12,17 +12,16 @@ This mod allows you to define an arbitrary number of alternative key combination
 ## API
 
 If you're a modder you can make use of NMUK's API by including it like this in the `build.gradle`:
+
 ```groovy
 repositories {
-   maven {
-       url "https://maven.siphalor.de/"
-       name "Siphalor's Maven"
-   }
+	maven {
+		url "https://jitpack.io"
+	}
 }
 
 dependencies {
-   modImplementation "de.siphalor:nmuk-1.17:1.0.1+"
-   include "de.siphalor:nmuk-1.17:1.0.1+"
+	include(modApi("com.github.Klotzi111:nmuk:multiversion-SNAPSHOT"))
 }
 ```
 

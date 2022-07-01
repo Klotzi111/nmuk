@@ -33,6 +33,7 @@ import com.blamejared.controlling.client.NewKeyBindsList;
 import com.blamejared.controlling.client.NewKeyBindsList.KeyEntry;
 import com.google.common.collect.ImmutableList;
 
+import de.klotzi111.fabricmultiversionhelper.api.text.TextWrapper;
 import de.siphalor.nmuk.impl.duck.IControlsListWidget;
 import de.siphalor.nmuk.impl.duck.IKeyBindingEntry;
 import de.siphalor.nmuk.impl.mixinimpl.MixinKeyBindingEntryImpl;
@@ -40,7 +41,6 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 // versioned aka 'MixinKeyBindingEntry_1_16' and normal mixin aka 'MixinKeyBindingEntry' combined
@@ -76,7 +76,7 @@ public abstract class MixinKeyEntry implements IKeyBindingEntry {
 
 	@Override
 	public Text nmuk$getBindingName() {
-		return new LiteralText(keyDesc);
+		return TextWrapper.literal(keyDesc);
 	}
 
 	@Unique
