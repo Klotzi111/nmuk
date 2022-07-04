@@ -59,7 +59,7 @@ dependencies {
 	modCompileOnly("curse.maven:Controlling-250398:3822621")
 
 	// Amecs API
-	testmodImplementation(klotzi111_localDeps ? "de.siphalor:amecsapi-${project.target_minecraft_major_version}:1+" : "com.github.Klotzi111:amecs-api:main-SNAPSHOT") {
+	testmodImplementation(klotzi111_localDeps ? "de.siphalor:amecsapi-${project.target_minecraft_major_version}:1+" : "com.github.Klotzi111:amecs-api:${project.target_minecraft_major_version}-SNAPSHOT") {
 		exclude(group: "*")
 	}
 	
